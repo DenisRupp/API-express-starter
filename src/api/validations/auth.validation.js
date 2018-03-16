@@ -1,35 +1,26 @@
-const Joi = require('joi');
+const { body } = require('express-validator/check');
 
 module.exports = {
   // POST /v1/auth/register
-  register: {
-    body: {
-      email: Joi.string().email().required(),
-      password: Joi.string().required().min(6).max(128),
-    },
-  },
+  register: [
+    body('email', 'Invalid email').isEmail().normalizeEmail(),
+    body('password', 'Passwords must be at least 8 chars long').isLength({ min: 8 }),
+  ],
 
   // POST /v1/auth/login
-  login: {
-    body: {
-      email: Joi.string().email().required(),
-      password: Joi.string().required().max(128),
-    },
-  },
+  login: [
+    body('email', 'Invalid email').isEmail().normalizeEmail(),
+    body('password', 'Passwords must be at least 8 chars long').isLength({ min: 8 }),
+  ],
 
   // POST /v1/auth/facebook
   // POST /v1/auth/google
-  oAuth: {
-    body: {
-      access_token: Joi.string().required(),
-    },
-  },
+  oAuth: [
+    body('access_token', 'Access token is required').exists(),
+  ],
 
   // POST /v1/auth/refresh
-  refresh: {
-    body: {
-      email: Joi.string().email().required(),
-      refreshToken: Joi.string().required(),
-    },
-  },
+  refresh: [
+    body('refreshToken', 'Refresh token is required').exists(),
+  ],
 };

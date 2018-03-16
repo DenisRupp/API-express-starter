@@ -1,13 +1,8 @@
 const express = require('express');
-const validate = require('express-validation');
+const validate = require('../../validations/handler');
 const controller = require('../../controllers/user.controller');
 const { authorize, ADMIN, LOGGED_USER } = require('../../middlewares/auth');
-const {
-  listUsers,
-  createUser,
-  replaceUser,
-  updateUser,
-} = require('../../validations/user.validation');
+const rules = require('../../validations/user.validation');
 
 const router = express.Router();
 
@@ -40,7 +35,7 @@ router
    * @apiError (Unauthorized 401)  Unauthorized  Only authenticated users can access the data
    * @apiError (Forbidden 403)     Forbidden     Only admins can access the data
    */
-  .get(authorize(ADMIN), validate(listUsers), controller.list)
+  .get(authorize(ADMIN), validate(rules.listUsers), controller.list)
   /**
    * @api {post} v1/users Create User
    * @apiDescription Create a new user
@@ -66,7 +61,7 @@ router
    * @apiError (Unauthorized 401)  Unauthorized     Only authenticated users can create the data
    * @apiError (Forbidden 403)     Forbidden        Only admins can create the data
    */
-  .post(authorize(ADMIN), validate(createUser), controller.create);
+  .post(authorize(ADMIN), validate(rules.createUser), controller.create);
 
 
 router
@@ -116,34 +111,6 @@ router
    */
   .get(authorize(LOGGED_USER), controller.get)
   /**
-   * @api {put} v1/users/:id Replace User
-   * @apiDescription Replace the whole user document with a new one
-   * @apiVersion 1.0.0
-   * @apiName ReplaceUser
-   * @apiGroup User
-   * @apiPermission user
-   *
-   * @apiHeader {String} Athorization  User's access token
-   *
-   * @apiParam  {String}             email     User's email
-   * @apiParam  {String{6..128}}     password  User's password
-   * @apiParam  {String{..128}}      [name]    User's name
-   * @apiParam  {String=user,admin}  [role]    User's role
-   * (You must be an admin to change the user's role)
-   *
-   * @apiSuccess {String}  id         User's id
-   * @apiSuccess {String}  name       User's name
-   * @apiSuccess {String}  email      User's email
-   * @apiSuccess {String}  role       User's role
-   * @apiSuccess {Date}    createdAt  Timestamp
-   *
-   * @apiError (Bad Request 400)  ValidationError  Some parameters may contain invalid values
-   * @apiError (Unauthorized 401) Unauthorized Only authenticated users can modify the data
-   * @apiError (Forbidden 403)    Forbidden    Only user with same id or admins can modify the data
-   * @apiError (Not Found 404)    NotFound     User does not exist
-   */
-  .put(authorize(LOGGED_USER), validate(replaceUser), controller.replace)
-  /**
    * @api {patch} v1/users/:id Update User
    * @apiDescription Update some fields of a user document
    * @apiVersion 1.0.0
@@ -170,7 +137,7 @@ router
    * @apiError (Forbidden 403)    Forbidden    Only user with same id or admins can modify the data
    * @apiError (Not Found 404)    NotFound     User does not exist
    */
-  .patch(authorize(LOGGED_USER), validate(updateUser), controller.update)
+  .patch(authorize(LOGGED_USER), validate(rules.updateUser), controller.update)
   /**
    * @api {patch} v1/users/:id Delete User
    * @apiDescription Delete a user

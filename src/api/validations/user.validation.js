@@ -1,52 +1,23 @@
-const Joi = require('joi');
-const User = require('../models/user.model');
+const { query, body, param } = require('express-validator/check');
 
 module.exports = {
 
   // GET /v1/users
-  listUsers: {
-    query: {
-      page: Joi.number().min(1),
-      perPage: Joi.number().min(1).max(100),
-      name: Joi.string(),
-      email: Joi.string(),
-      role: Joi.string().valid(User.roles),
-    },
-  },
+  listUsers: [
+    query('page', 'Page is required').exists().toInt(),
+    query('qty', 'Qty is required').exists().toInt(),
+  ],
 
   // POST /v1/users
-  createUser: {
-    body: {
-      email: Joi.string().email().required(),
-      password: Joi.string().min(6).max(128).required(),
-      name: Joi.string().max(128),
-      role: Joi.string().valid(User.roles),
-    },
-  },
-
-  // PUT /v1/users/:userId
-  replaceUser: {
-    body: {
-      email: Joi.string().email().required(),
-      password: Joi.string().min(6).max(128).required(),
-      name: Joi.string().max(128),
-      role: Joi.string().valid(User.roles),
-    },
-    params: {
-      userId: Joi.string().regex(/^[a-fA-F0-9]{24}$/).required(),
-    },
-  },
+  createUser: [
+    body('email', 'Invalid email').isEmail().normalizeEmail(),
+    body('password', 'Passwords must be at least 8 chars long').isLength({ min: 8 }),
+  ],
 
   // PATCH /v1/users/:userId
-  updateUser: {
-    body: {
-      email: Joi.string().email(),
-      password: Joi.string().min(6).max(128),
-      name: Joi.string().max(128),
-      role: Joi.string().valid(User.roles),
-    },
-    params: {
-      userId: Joi.string().regex(/^[a-fA-F0-9]{24}$/).required(),
-    },
-  },
+  updateUser: [
+    body('email', 'Invalid email').isEmail().normalizeEmail(),
+    body('password', 'Passwords must be at least 8 chars long').isLength({ min: 8 }),
+    param('userId', 'User id is required').exists(),
+  ],
 };

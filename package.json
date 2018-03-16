@@ -13,8 +13,8 @@
   "scripts": {
     "precommit": "yarn lint",
     "prestart": "yarn docs",
-    "start": "cross-env NODE_ENV=production pm2 start ./src/index.js",
-    "dev": "nodemon ./src/index.js",
+    "start": "pm2 start ./src/index.js",
+    "dev": "pm2 start ./src/index.js --watch && pm2 logs",
     "lint": "eslint **/*.js --ignore-path .gitignore --ignore-pattern internals/scripts",
     "lint:fix": "yarn lint -- --fix",
     "lint:watch": "yarn lint -- --watch",
@@ -25,10 +25,8 @@
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "postcoverage": "opn coverage/lcov-report/index.html",
     "validate": "yarn lint && yarn test",
-    "postpublish": "git push --tags",
     "deploy": "sh ./deploy.sh",
-    "docs": "apidoc -i src -o docs",
-    "postdocs": "opn docs/index.html"
+    "docs": "apidoc -i src -o docs"
   },
   "repository": {
     "type": "git",
@@ -67,7 +65,7 @@
     "cross-env": "^5.0.1",
     "dotenv-safe": "^4.0.4",
     "express": "^4.15.2",
-    "express-validation": "^1.0.2",
+    "express-validator": "^5.0.3",
     "helmet": "^3.5.0",
     "http-status": "^1.0.1",
     "joi": "^10.4.1",
