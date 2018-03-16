@@ -1,5 +1,4 @@
 # Express ES2017 REST API Boilerplate
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com) [![npm version](https://badge.fury.io/js/express-rest-es2017-boilerplate.svg)](https://badge.fury.io/js/express-rest-es2017-boilerplate) [![Build Status](https://travis-ci.org/danielfsousa/express-rest-es2017-boilerplate.svg?branch=master)](https://travis-ci.org/danielfsousa/express-rest-es2017-boilerplate) [![Coverage Status](https://coveralls.io/repos/github/danielfsousa/express-rest-es2017-boilerplate/badge.svg?branch=master)](https://coveralls.io/github/danielfsousa/express-rest-es2017-boilerplate?branch=master) [![bitHound Overall Score](https://www.bithound.io/github/danielfsousa/express-rest-es2017-boilerplate/badges/score.svg)](https://www.bithound.io/github/danielfsousa/express-rest-es2017-boilerplate) [![Greenkeeper badge](https://badges.greenkeeper.io/danielfsousa/express-rest-es2017-boilerplate.svg)](https://greenkeeper.io/)
 
 Boilerplate/Generator/Starter Project for building RESTful APIs and microservices using Node.js, Express and MongoDB
 
@@ -10,6 +9,7 @@ Boilerplate/Generator/Starter Project for building RESTful APIs and microservice
  - CORS enabled
  - Uses [yarn](https://yarnpkg.com)
  - Express + MongoDB ([Mongoose](http://mongoosejs.com/))
+ - Request validation ([express validator](https://github.com/ctavan/express-validator)
  - Consistent coding styles with [editorconfig](http://editorconfig.org)
  - Uses [helmet](https://github.com/helmetjs/helmet) to set some HTTP headers for security
  - Load environment variables from .env files with [dotenv](https://github.com/rolodato/dotenv-safe)
@@ -29,14 +29,15 @@ Boilerplate/Generator/Starter Project for building RESTful APIs and microservice
 
  - [Node v8.10+](https://nodejs.org/en/download/current/)
  - [Yarn](https://yarnpkg.com/en/docs/install)
+ - [PM2](http://pm2.keymetrics.io/)
 
 ## Getting Started
 
 Clone the repo and make it yours:
 
 ```bash
-git clone --depth 1 https://github.com/danielfsousa/express-rest-es2017-boilerplate
-cd express-rest-es2017-boilerplate
+git clone --depth 1 https://github.com/DenisRupp/express-ES2017
+cd express-ES2017
 rm -rf .git
 ```
 
@@ -116,3 +117,5 @@ pm2 logs
 # generate and open api documentation
 yarn docs
 ```
+
+Inspired by [danielfsousa](https://github.com/danielfsousa/express-rest-es2017-boilerplate)
