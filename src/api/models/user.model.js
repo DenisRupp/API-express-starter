@@ -21,7 +21,6 @@ const roles = ['user', 'admin'];
 const userSchema = new mongoose.Schema({
   email: {
     type: String,
-    match: /^\S+@\S+\.\S+$/,
     required: true,
     unique: true,
     trim: true,
@@ -58,6 +57,19 @@ const userSchema = new mongoose.Schema({
 }, {
   timestamps: true,
 });
+
+//  transform object in json responses
+userSchema.options.toJSON = {
+  transform: (doc, ret, options) => {
+    delete ret.__v;
+    delete ret.password;
+    delete ret.refresh_token;
+    delete ret.notification;
+    return ret;
+  },
+};
+userSchema.options.toJObject = userSchema.options.toJSON;
+
 
 userSchema.plugin(uniqueValidator, { message: 'That {PATH} is taken, try again' });
 

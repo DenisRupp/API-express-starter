@@ -5,15 +5,16 @@ const { generateRefreshToken, generateAuthToken } = require('../services/tokenGe
 
 const authResponse = async (req, res, next) => {
   try {
-    const authToken = generateAuthToken(req.user);
-    const remember = (req.body.remember) ? req.body.remember : req.user.refresh_token.remember;
+    const auth = generateAuthToken(req.user);
 
-    req.user.refresh_token = generateRefreshToken(req.user, remember);
+    req.user.refresh_token = generateRefreshToken(req.user);
     const user = await req.user.save();
 
     res.json({
-      refreshToken: user.refresh_token,
-      authToken,
+      tokens: {
+        refresh: user.refresh_token.token,
+        auth,
+      },
       user,
     });
   } catch (error) {
