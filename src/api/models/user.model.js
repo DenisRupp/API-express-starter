@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const httpStatus = require('http-status');
 const { omitBy, isNil } = require('lodash');
 const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
 const moment = require('moment-timezone');
 const jwt = require('jwt-simple');
 const uuidv4 = require('uuid/v4');
@@ -42,6 +43,7 @@ const userSchema = new mongoose.Schema({
     facebook: String,
     google: String,
   },
+  refresh_token: mongoose.Types.Mixed,
   role: {
     type: String,
     enum: roles,
@@ -67,9 +69,7 @@ userSchema.pre('save', async function save(next) {
 
     const rounds = env === 'test' ? 1 : 10;
 
-    const hash = await bcrypt.hash(this.password, rounds);
-    this.password = hash;
-
+    this.password = await bcrypt.hash(this.password, rounds);
     return next();
   } catch (error) {
     return next(error);
@@ -100,8 +100,16 @@ userSchema.method({
     return jwt.encode(playload, jwtSecret);
   },
 
-  async passwordMatches(password) {
+  async verifyPassword(password) {
     return bcrypt.compare(password, this.password);
+  },
+
+  generateRefreshToken() {
+    const user = this;
+    const token = `${user._id}.${crypto.randomBytes(40).toString('hex')}`;
+    const expires = moment().add(30, 'days').toDate();
+    user.refresh_token = { token, expires };
+    return user;
   },
 });
 
@@ -109,61 +117,12 @@ userSchema.method({
  * Statics
  */
 userSchema.statics = {
-
-  roles,
-
-  /**
-   * Get user
-   *
-   * @param {ObjectId} id - The objectId of user.
-   * @returns {Promise<User, APIError>}
-   */
-  async get(id) {
-    try {
-      let user;
-
-      if (mongoose.Types.ObjectId.isValid(id)) {
-        user = await this.findById(id).exec();
-      }
-      if (user) {
-        return user;
-      }
-
-      throw new APIError({
-        message: 'User does not exist',
-        status: httpStatus.NOT_FOUND,
-      });
-    } catch (error) {
-      throw error;
+  async getByRefreshToken(token) {
+    const user = await this.find({ refresh_token: { $elemMatch: { token } } });
+    if (user && moment().isBefore(moment(user.refresh_token.expires))) {
+      return user;
     }
-  },
-
-  /**
-   * Find user by email and tries to generate a JWT token
-   *
-   * @param {ObjectId} id - The objectId of user.
-   * @returns {Promise<User, APIError>}
-   */
-  async findAndGenerateToken(options) {
-    const { email, password, refreshObject } = options;
-    if (!email) throw new APIError({ message: 'An email is required to generate a token' });
-
-    const user = await this.findOne({ email }).exec();
-    const err = {
-      status: httpStatus.UNAUTHORIZED,
-      isPublic: true,
-    };
-    if (password) {
-      if (user && await user.passwordMatches(password)) {
-        return { user, accessToken: user.token() };
-      }
-      err.message = 'Incorrect email or password';
-    } else if (refreshObject && refreshObject.userEmail === email) {
-      return { user, accessToken: user.token() };
-    } else {
-      err.message = 'Incorrect email or refreshToken';
-    }
-    throw new APIError(err);
+    return false;
   },
 
   /**
@@ -183,30 +142,6 @@ userSchema.statics = {
       .skip(perPage * (page - 1))
       .limit(perPage)
       .exec();
-  },
-
-  /**
-   * Return new validation error
-   * if error is a mongoose duplicate key error
-   *
-   * @param {Error} error
-   * @returns {Error|APIError}
-   */
-  checkDuplicateEmail(error) {
-    if (error.name === 'MongoError' && error.code === 11000) {
-      return new APIError({
-        message: 'Validation Error',
-        errors: [{
-          field: 'email',
-          location: 'body',
-          messages: ['"email" already exists'],
-        }],
-        status: httpStatus.CONFLICT,
-        isPublic: true,
-        stack: error.stack,
-      });
-    }
-    return error;
   },
 
   async oAuthLogin({
