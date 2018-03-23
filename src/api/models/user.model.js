@@ -60,12 +60,13 @@ const userSchema = new mongoose.Schema({
 
 //  transform object in json responses
 userSchema.options.toJSON = {
-  transform: (doc, ret, options) => {
-    delete ret.__v;
-    delete ret.password;
-    delete ret.refresh_token;
-    delete ret.notification;
-    return ret;
+  transform: (doc, ret) => {
+    const user = ret;
+    delete user.__v;
+    delete user.password;
+    delete user.refresh_token;
+    delete user.notification;
+    return user;
   },
 };
 userSchema.options.toJObject = userSchema.options.toJSON;
