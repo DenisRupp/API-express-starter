@@ -1,54 +1,49 @@
+/* eslint-disable no-restricted-syntax,no-param-reassign,no-prototype-builtins */
 const httpStatus = require('http-status');
-const APIError = require('../utils/APIError');
-const { env } = require('../../config/vars');
 
 /**
- * Error handler. Send stacktrace only during development
- * @public
+ * Change mongoose validation errors
  */
-const handler = (err, req, res, next) => {
-  const response = {
-    code: err.status,
-    message: err.message || httpStatus[err.status],
-    errors: err.errors,
-    stack: err.stack,
-  };
+const formValidation = (err, req, res, next) => {
+  if (err.name !== 'ValidationError') return next(err);
 
-  if (env !== 'development') {
-    delete response.stack;
+  for (const key in err.errors) {
+    if (err.errors.hasOwnProperty(key)) {
+      err.errors[key] = err.errors[key].message;
+    }
   }
 
-  res.status(err.status);
-  res.json(response);
-};
-exports.handler = handler;
-
-/**
- * If error is not an instanceOf APIError, convert it.
- * @public
- */
-exports.converter = (err, req, res, next) => {
-  let convertedError = err;
-
-  if (!(err instanceof APIError)) {
-    convertedError = new APIError({
-      message: err.message,
-      status: err.status,
-      stack: err.stack,
-    });
-  }
-
-  return handler(convertedError, req, res);
+  return res.status(400).json(err);
 };
 
 /**
- * Catch 404 and forward to error handler
- * @public
+ * Catch invalid token error
  */
-exports.notFound = (req, res, next) => {
-  const err = new APIError({
-    message: 'Not found',
-    status: httpStatus.NOT_FOUND,
-  });
-  return handler(err, req, res);
+const invalidToken = (err, req, res, next) => {
+  if (err.name !== 'UnauthorizedError') return next(err);
+  const message = (err.message === 'jwt expired') ? 'Token has been expired' : 'Invalid token';
+  return res.status(httpStatus.UNAUTHORIZED).json({ message });
 };
+
+/**
+ * Catch not found elements
+ */
+const wrongUrlParam = (err, req, res, next) => {
+  if (err.name !== 'CastError') return next(err);
+  return res.status(404).json({ message: `Can't find element with ${err.path} ${err.value}` });
+};
+
+/**
+ * Unexpected errors handler
+ */
+const other = (err, req, res, next) => {
+  // set locals, only providing error in development
+  res.locals.message = err.message;
+  res.locals.error = req.app.get('env') === 'dev' ? err : {};
+
+  res.status(err.status || 500);
+  console.error(err);
+  res.json(err);
+};
+
+module.exports = [formValidation, invalidToken, wrongUrlParam, other];

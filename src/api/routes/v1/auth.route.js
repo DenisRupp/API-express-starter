@@ -1,7 +1,6 @@
 const express = require('express');
 const validate = require('../../validations/handler');
 const controller = require('../../controllers/auth.controller');
-const oAuthLogin = require('../../middlewares/auth').oAuth;
 const rules = require('../../validations/auth.validation');
 
 const router = express.Router();
@@ -114,7 +113,7 @@ router.route('/refresh-token')
  * @apiError (Unauthorized 401)  Unauthorized    Incorrect access_token
  */
 router.route('/facebook')
-  .post(validate(rules.oAuth), oAuthLogin('facebook'), controller.oAuth);
+  .post(validate(rules.oAuth), controller.oAuth);
 
 /**
  * @api {post} v1/auth/google Google Login
@@ -135,6 +134,6 @@ router.route('/facebook')
  * @apiError (Unauthorized 401)  Unauthorized    Incorrect access_token
  */
 router.route('/google')
-  .post(validate(rules.oAuth), oAuthLogin('google'), controller.oAuth);
+  .post(validate(rules.oAuth), controller.oAuth);
 
 module.exports = router;

@@ -1,12 +1,12 @@
 const mongoose = require('mongoose');
-const httpStatus = require('http-status');
 const { omitBy, isNil } = require('lodash');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const moment = require('moment-timezone');
 const jwt = require('jwt-simple');
 const uuidv4 = require('uuid/v4');
-const APIError = require('../utils/APIError');
+const uniqueValidator = require('mongoose-unique-validator');
+
 const { env, jwtSecret, jwtExpirationInterval } = require('../../config/vars');
 
 /**
@@ -43,7 +43,9 @@ const userSchema = new mongoose.Schema({
     facebook: String,
     google: String,
   },
-  refresh_token: mongoose.Types.Mixed,
+  refresh_token: {
+    type: mongoose.Schema.Types.Mixed,
+  },
   role: {
     type: String,
     enum: roles,
@@ -56,6 +58,8 @@ const userSchema = new mongoose.Schema({
 }, {
   timestamps: true,
 });
+
+userSchema.plugin(uniqueValidator, { message: 'That {PATH} is taken, try again' });
 
 /**
  * Add your
