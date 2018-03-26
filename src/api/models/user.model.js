@@ -65,13 +65,10 @@ userSchema.options.toJSON = {
     delete user.__v;
     delete user.password;
     delete user.refresh_token;
-    delete user.notification;
     return user;
   },
 };
 userSchema.options.toJObject = userSchema.options.toJSON;
-
-
 userSchema.plugin(uniqueValidator, { message: 'That {PATH} is taken, try again' });
 
 /**
@@ -135,11 +132,8 @@ userSchema.method({
  */
 userSchema.statics = {
   async getByRefreshToken(token) {
-    const user = await this.find({ refresh_token: { $elemMatch: { token } } });
-    if (user && moment().isBefore(moment(user.refresh_token.expires))) {
-      return user;
-    }
-    return false;
+    const user = await this.findOne({ 'refresh_token.token': token });
+    return (user && moment().isBefore(moment(user.refresh_token.expires))) ? user : false;
   },
 
   /**

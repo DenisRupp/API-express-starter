@@ -3,6 +3,10 @@ const User = require('../models/user.model');
 const userProvider = require('../middlewares/user-provider');
 const { generateRefreshToken, generateAuthToken } = require('../services/tokenGenerator');
 
+/**
+ * Generate response with refresh and auth tokens
+ * @private
+ */
 const authResponse = async (req, res, next) => {
   try {
     const auth = generateAuthToken(req.user);
@@ -59,9 +63,13 @@ exports.oAuth = async (req, res, next) => {
  */
 exports.refresh = [
   async (req, res, next) => {
-    const user = User.getByRefreshToken(req.body.token);
-    if (!user) res.status(httpStatus.UNAUTHORIZED).json({ message: 'Refresh token is invalid' });
-    req.user = user;
-    next();
+    try {
+      const user = await User.getByRefreshToken(req.bosy.token);
+      if (!user) return next({ status: httpStatus.UNAUTHORIZED, message: 'Refresh token is invalid' });
+      req.user = user;
+      return next();
+    } catch (error) {
+      return next(error);
+    }
   }, authResponse,
 ];
