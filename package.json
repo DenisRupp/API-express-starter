@@ -10,8 +10,12 @@
     "node": ">=8.10",
     "yarn": "*"
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "yarn lint"
+    }
+  },
   "scripts": {
-    "precommit": "yarn lint",
     "prestart": "yarn docs",
     "start": "pm2 start ./src/index.js",
     "dev": "pm2 start ./src/index.js --watch && pm2 logs",
