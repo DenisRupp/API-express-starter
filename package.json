@@ -1,6 +1,6 @@
 {
   "name": "express-es2017-boilerplate",
-  "version": "1.2.1",
+  "version": "1.0",
   "description": "Express boilerplate for building RESTful APIs",
   "author": "Denis Rupp <denis.rupp@n3wnormal.com>",
   "main": "src/index.js",
@@ -84,7 +84,10 @@
     "passport": "^0.4.0",
     "passport-http-bearer": "^1.0.1",
     "passport-jwt": "3.0.0",
+    "pg": "^7.4.1",
+    "pg-hstore": "^2.3.2",
     "pm2": "^2.10.1",
+    "sequelize": "^4.37.4",
     "uuid": "^3.2.1"
   },
   "devDependencies": {

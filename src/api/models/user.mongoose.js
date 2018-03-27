@@ -10,8 +10,8 @@ const uniqueValidator = require('mongoose-unique-validator');
 const { env, jwtSecret, jwtExpirationInterval } = require('../../config/vars');
 
 /**
- * User Roles
- */
+* User Roles
+*/
 const roles = ['user', 'admin'];
 
 /**
@@ -144,8 +144,8 @@ userSchema.statics = {
    * @returns {Promise<User[]>}
    */
   list({
-         page = 1, perPage = 30, name, email, role,
-       }) {
+    page = 1, perPage = 30, name, email, role,
+  }) {
     const options = omitBy({ name, email, role }, isNil);
 
     return this.find(options)
@@ -156,8 +156,8 @@ userSchema.statics = {
   },
 
   async oAuthLogin({
-                     service, id, email, name, picture,
-                   }) {
+    service, id, email, name, picture,
+  }) {
     const user = await this.findOne({ $or: [{ [`services.${service}`]: id }, { email }] });
     if (user) {
       user.services[service] = id;
