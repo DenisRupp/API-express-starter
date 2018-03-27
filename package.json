@@ -1,6 +1,6 @@
 {
   "name": "express-es2017-boilerplate",
-  "version": "1.0",
+  "version": "1.2.1",
   "description": "Express boilerplate for building RESTful APIs",
   "author": "Denis Rupp <denis.rupp@n3wnormal.com>",
   "main": "src/index.js",
@@ -10,12 +10,8 @@
     "node": ">=8.10",
     "yarn": "*"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "yarn lint"
-    }
-  },
   "scripts": {
+    "precommit": "yarn lint",
     "prestart": "yarn docs",
     "start": "pm2 start ./src/index.js",
     "dev": "pm2 start ./src/index.js --watch && pm2 logs",
@@ -40,8 +36,8 @@
     "express",
     "node",
     "node.js",
-    "mongodb",
-    "mongoose",
+    "sequelize",
+    "postgres",
     "passport",
     "es6",
     "es7",
@@ -81,8 +77,6 @@
     "lodash": "^4.17.5",
     "method-override": "^2.3.8",
     "moment-timezone": "^0.5.14",
-    "mongoose": "^4.13.12",
-    "mongoose-unique-validator": "^2.0.0",
     "morgan": "^1.8.1",
     "npm-merge-driver": "^2.3.5",
     "passport": "^0.4.0",
