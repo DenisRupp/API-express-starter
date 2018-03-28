@@ -2,13 +2,16 @@
 const path = require('path');
 const fs = require('fs');
 const Sequelize = require('sequelize');
-const { db: config } = require('./vars');
+
+const env = process.env.NODE_ENV || 'development';
+const config = require('../database/config')[env];
 
 const db = {};
 const modelsPath = path.join(__dirname, '/../api/models/');
 const sequelize = new Sequelize(config.database, config.username, config.password, config);
 
 config.logging = process.env.NODE_ENV === 'development';
+
 // Common operatorsAliases is deprecated
 config.operatorsAliases = require('../database/operatorsAliases');
 

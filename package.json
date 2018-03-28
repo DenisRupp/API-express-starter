@@ -13,8 +13,8 @@
   "scripts": {
     "precommit": "yarn lint",
     "prestart": "yarn docs",
-    "start": "pm2 start ./src/index.js",
-    "dev": "pm2 start ./src/index.js --watch && pm2 logs",
+    "start": "yarn db:migrate && pm2 start ./src/index.js",
+    "dev": "yarn migrate && pm2 start ./src/index.js --watch && pm2 logs",
     "lint": "eslint **/*.js --ignore-path .gitignore --ignore-pattern internals/scripts",
     "lint:fix": "yarn lint -- --fix",
     "lint:watch": "yarn lint -- --watch",
@@ -26,7 +26,9 @@
     "postcoverage": "opn coverage/lcov-report/index.html",
     "validate": "yarn lint && yarn test",
     "deploy": "sh ./deploy.sh",
-    "docs": "apidoc -i src -o docs"
+    "docs": "apidoc -i src -o docs",
+    "db:migrate": "sequelize db:migrate",
+    "db:seeds": "sequelize db:seed"
   },
   "repository": {
     "type": "git",
