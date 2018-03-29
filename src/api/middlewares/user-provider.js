@@ -1,6 +1,6 @@
 const httpStatus = require('http-status');
 const FB = require('fb');
-const User = require('../models/user.model');
+const { User } = require('../models');
 
 /**
  * Get user from database by email and password
@@ -15,7 +15,7 @@ exports.getLocalUser = async (req, res, next) => {
 
   try {
     if (!req.body.email || !req.body.password) throw authError;
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ where: { email } });
     if (!user) throw authError;
 
     // Make sure the password is correct

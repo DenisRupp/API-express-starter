@@ -12,14 +12,5 @@ module.exports = {
   port: process.env.PORT,
   jwtSecret: process.env.JWT_SECRET,
   jwtExpirationInterval: process.env.JWT_EXPIRATION_MINUTES,
-  db: {
-    database: process.env.NODE_ENV === 'test'
-      ? process.env.DB_DATABASE_TEST
-      : process.env.DB_DATABASE,
-    password: process.env.DB_PASSWORD,
-    username: process.env.DB_USER,
-    host: process.env.DB_HOST || 'localhost',
-    dialect: 'postgres',
-  },
   logs: process.env.NODE_ENV === 'production' ? 'combined' : 'dev',
 };

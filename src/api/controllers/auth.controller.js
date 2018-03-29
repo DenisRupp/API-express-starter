@@ -1,5 +1,5 @@
 const httpStatus = require('http-status');
-const User = require('../models/user.model');
+const { User } = require('../models');
 const userProvider = require('../middlewares/user-provider');
 const { generateRefreshToken, generateAuthToken } = require('../services/tokenGenerator');
 

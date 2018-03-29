@@ -1,12 +1,6 @@
 const { body } = require('express-validator/check');
 
 module.exports = {
-  // POST /v1/auth/register
-  register: [
-    body('email', 'Invalid email').isEmail().normalizeEmail(),
-    body('password', 'Passwords must be at least 8 chars long').isLength({ min: 8 }),
-  ],
-
   // POST /v1/auth/login
   login: [
     body('email', 'Invalid email').isEmail().normalizeEmail(),

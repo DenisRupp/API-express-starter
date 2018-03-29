@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const expressJwt = require('express-jwt');
-const User = require('../models/user.model');
+const { User } = require('../models');
 
 router.use(
   expressJwt({ secret: process.env.SECRET_STRING }),
@@ -8,7 +8,7 @@ router.use(
     try {
       const invalidToken = { message: 'Invalid token', status: 401 };
       const userBlocked = { message: 'User is blocked', status: 401 };
-      const user = await User.findOne({ _id: req.user.id });
+      const user = await User.findById(req.user.id);
 
       if (!user) throw invalidToken;
       if (!user.active) throw userBlocked;

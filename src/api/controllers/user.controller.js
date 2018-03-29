@@ -1,6 +1,6 @@
 const httpStatus = require('http-status');
 const { omit } = require('lodash');
-const User = require('../models/user.model');
+const User = require('../models/user');
 const { handler: errorHandler } = require('../middlewares/error');
 
 /**
@@ -53,10 +53,10 @@ exports.replace = async (req, res, next) => {
     const { user } = req.locals;
     const newUser = new User(req.body);
     const ommitRole = user.role !== 'admin' ? 'role' : '';
-    const newUserObject = omit(newUser.toObject(), '_id', ommitRole);
+    const newUserObject = omit(newUser.toObject(), 'id', ommitRole);
 
     await user.update(newUserObject, { override: true, upsert: true });
-    const savedUser = await User.findById(user._id);
+    const savedUser = await User.findById(user.id);
 
     res.json(savedUser.transform());
   } catch (error) {
