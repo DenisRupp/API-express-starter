@@ -1,5 +1,6 @@
 const bcrypt = require('bcryptjs');
 const moment = require('moment-timezone');
+const { omit } = require('lodash');
 
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define('User', {
@@ -67,15 +68,11 @@ module.exports = (sequelize, DataTypes) => {
      * Prepare object to serialization
      * @returns {Object}
      */
-    transform() {
-      const transformed = {};
-      const fields = ['id', 'first_name', 'last_name', 'is_active', 'created_at'];
-
-      fields.forEach((field) => {
-        transformed[field] = this[field];
-      });
-
-      return transformed;
+    serialize() {
+      return omit(
+        this.get({ plain: true }),
+        ['password', 'refresh_token'],
+      );
     },
 
     /**

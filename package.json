@@ -13,8 +13,8 @@
   "scripts": {
     "precommit": "yarn lint",
     "prestart": "yarn docs",
-    "start": "yarn migrate && pm2 start ./src/index.js",
-    "dev": "yarn migrate && pm2 start ./src/index.js --watch && pm2 logs",
+    "start": "yarn migrate && pm2 start ecosystem.config.js --only API --env production",
+    "dev": "yarn migrate && pm2 start ecosystem.config.js --only API_LOCAL && pm2 logs",
     "lint": "eslint **/*.js --ignore-path .gitignore --ignore-pattern internals/scripts",
     "lint:fix": "yarn lint -- --fix",
     "lint:watch": "yarn lint -- --watch",
@@ -107,5 +107,5 @@
     "sinon-chai": "^2.10.0",
     "supertest": "^3.0.0"
   },
-  "eslintIgnore": ["src/api/database/"]
+  "eslintIgnore": ["src/api/database/, ecosystem.config.js"]
 }
