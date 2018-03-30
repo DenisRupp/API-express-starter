@@ -30,6 +30,10 @@ module.exports = (sequelize, DataTypes) => {
     password: {
       type: DataTypes.STRING,
     },
+    facebook_id: {
+      type: DataTypes.STRING,
+      unique: true,
+    },
     refresh_token: DataTypes.JSONB,
     is_active: {
       defaultValue: true,
@@ -71,7 +75,7 @@ module.exports = (sequelize, DataTypes) => {
     serialize() {
       return omit(
         this.get({ plain: true }),
-        ['password', 'refresh_token'],
+        ['password', 'refresh_token', 'facebook_id'],
       );
     },
 

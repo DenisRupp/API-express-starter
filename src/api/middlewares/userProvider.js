@@ -65,7 +65,7 @@ exports.getFacebookUser = async (req, res, next) => {
     delete facebookUser.id;
     req.facebookUser = facebookUser;
 
-    const user = await User.findOne({ email: facebookUser.email });
+    const user = await User.findOne({ where: { facebook_id: facebookUser.facebook_id } });
     if (user) { req.user = user; }
     next();
   } catch (error) {

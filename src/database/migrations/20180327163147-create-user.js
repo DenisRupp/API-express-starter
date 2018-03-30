@@ -25,7 +25,12 @@ module.exports = {
     },
     refresh_token: {
       unique: true,
+      allowNull: true,
       type: Sequelize.JSONB,
+    },
+    facebook_id: {
+      type: Sequelize.STRING,
+      unique: true,
     },
     is_active: {
       type: Sequelize.BOOLEAN,
