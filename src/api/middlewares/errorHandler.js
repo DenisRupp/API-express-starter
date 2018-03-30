@@ -2,18 +2,19 @@
 const httpStatus = require('http-status');
 
 /**
- * Change mongoose validation errors
+ * Change sequelize validation errors
  */
 const formValidation = (err, req, res, next) => {
-  if (err.name !== 'ValidationError') return next(err);
+  if (err.name === 'SequelizeValidationError' || err.name === 'SequelizeUniqueConstraintError') {
+    const errors = {};
 
-  for (const key in err.errors) {
-    if (err.errors.hasOwnProperty(key)) {
-      err.errors[key] = err.errors[key].message;
+    for (const error of err.errors) {
+      errors[error.path] = error.message;
     }
-  }
 
-  return res.status(400).json(err);
+    return res.status(400).json({name: err.name, errors });
+  }
+  return next(err);
 };
 
 /**

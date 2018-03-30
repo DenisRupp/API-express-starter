@@ -7,7 +7,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const routes = require('../api/routes/v1');
 const { logs } = require('./vars');
-const errorHandler = require('../api/middlewares/error');
+const errorHandler = require('../api/middlewares/errorHandler');
 const httpStatus = require('http-status');
 
 /**

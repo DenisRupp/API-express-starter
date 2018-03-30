@@ -7,7 +7,7 @@ const sinon = require('sinon');
 const bcrypt = require('bcryptjs');
 const { some, omitBy, isNil } = require('lodash');
 const app = require('../../../index');
-const User = require('../../models/user.model');
+const User = require('../../models/user');
 const JWT_EXPIRATION = require('../../../config/vars').jwtExpirationInterval;
 
 /**
@@ -267,7 +267,7 @@ describe('Users API', async () => {
 
   describe('GET /v1/users/:userId', () => {
     it('should get user', async () => {
-      const id = (await User.findOne({}))._id;
+      const { id } = await User.findOne({});
       delete dbUsers.branStark.password;
 
       return request(app)
