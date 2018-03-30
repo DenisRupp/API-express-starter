@@ -64,7 +64,7 @@ exports.oAuth = async (req, res, next) => {
 exports.refresh = [
   async (req, res, next) => {
     try {
-      const user = await User.getByRefreshToken(req.bosy.token);
+      const user = await User.getByRefreshToken(req.body.refresh_token);
       if (!user) return next({ status: httpStatus.UNAUTHORIZED, message: 'Refresh token is invalid' });
       req.user = user;
       return next();

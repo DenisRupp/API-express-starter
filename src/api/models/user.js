@@ -57,8 +57,8 @@ module.exports = (sequelize, DataTypes) => {
    * @param token
    * @returns {Promise<*>}
    */
-  User.getByRefreshToken = async (token) => {
-    const user = await this.findOne({ 'refresh_token.token': token });
+  User.getByRefreshToken = async function (token) {
+    const user = await this.findOne({ where: { 'refresh_token.token': token } });
     return (user && moment().isBefore(moment(user.refresh_token.expires))) ? user : false;
   };
 
