@@ -53,9 +53,19 @@ exports.login = [userProvider.getLocalUser, authResponse];
  * Returns jwt token
  * @public
  */
-exports.oAuth = async (req, res, next) => {
-
-};
+exports.oAuth = [
+  userProvider.getFacebookUser,
+  async (req, res, next) => {
+    try {
+      if (!req.user) {
+        req.user = await new User(req.facebookUser).save();
+      }
+    } catch (error) {
+      next(error);
+    }
+  },
+  authResponse,
+];
 
 /**
  * Returns a new jwt when given a valid refresh token
@@ -64,7 +74,7 @@ exports.oAuth = async (req, res, next) => {
 exports.refresh = [
   async (req, res, next) => {
     try {
-      const user = await User.getByRefreshToken(req.bosy.token);
+      const user = await User.getByRefreshToken(req.body.refresh_token);
       if (!user) return next({ status: httpStatus.UNAUTHORIZED, message: 'Refresh token is invalid' });
       req.user = user;
       return next();

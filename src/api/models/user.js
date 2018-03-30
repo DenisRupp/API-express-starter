@@ -30,6 +30,10 @@ module.exports = (sequelize, DataTypes) => {
     password: {
       type: DataTypes.STRING,
     },
+    facebook_id: {
+      type: DataTypes.STRING,
+      unique: true,
+    },
     refresh_token: DataTypes.JSONB,
     is_active: {
       defaultValue: true,
@@ -57,8 +61,8 @@ module.exports = (sequelize, DataTypes) => {
    * @param token
    * @returns {Promise<*>}
    */
-  User.getByRefreshToken = async (token) => {
-    const user = await this.findOne({ 'refresh_token.token': token });
+  User.getByRefreshToken = async function (token) {
+    const user = await this.findOne({ where: { 'refresh_token.token': token } });
     return (user && moment().isBefore(moment(user.refresh_token.expires))) ? user : false;
   };
 
@@ -71,7 +75,7 @@ module.exports = (sequelize, DataTypes) => {
     serialize() {
       return omit(
         this.get({ plain: true }),
-        ['password', 'refresh_token'],
+        ['password', 'refresh_token', 'facebook_id'],
       );
     },
 
