@@ -62,6 +62,7 @@
     "bcryptjs": "2.4.3",
     "bluebird": "^3.5.0",
     "body-parser": "^1.17.0",
+    "cancan": "^3.1.0",
     "compression": "^1.7.2",
     "cors": "^2.8.3",
     "cross-env": "^5.1.4",
@@ -107,5 +108,7 @@
     "sinon-chai": "^2.10.0",
     "supertest": "^3.0.0"
   },
-  "eslintIgnore": ["src/api/database/, ecosystem.config.js"]
+  "eslintIgnore": [
+    "src/api/database/, ecosystem.config.js"
+  ]
 }
