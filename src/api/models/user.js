@@ -30,6 +30,10 @@ module.exports = (sequelize, DataTypes) => {
     password: {
       type: DataTypes.STRING,
     },
+    role: {
+      type: DataTypes.ENUM('user', 'admin'),
+      defaultValue: 'user',
+    },
     facebook_id: {
       type: DataTypes.STRING,
       unique: true,

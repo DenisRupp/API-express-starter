@@ -32,6 +32,10 @@ module.exports = {
       type: Sequelize.STRING,
       unique: true,
     },
+    role: {
+      type: Sequelize.ENUM('user', 'admin'),
+      allowNull: false,
+    },
     is_active: {
       type: Sequelize.BOOLEAN,
     },
