@@ -19,7 +19,7 @@ const authResponse = async (req, res, next) => {
         refresh: user.refresh_token.token,
         auth,
       },
-      user: user.serialize(),
+      user: user.transform(),
     });
   } catch (error) {
     next(error);

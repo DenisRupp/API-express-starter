@@ -76,7 +76,7 @@ module.exports = (sequelize, DataTypes) => {
      * Prepare object to serialization
      * @returns {Object}
      */
-    serialize() {
+    transform() {
       return omit(
         this.get({ plain: true }),
         ['password', 'refresh_token', 'facebook_id'],

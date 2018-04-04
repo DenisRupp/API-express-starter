@@ -1,6 +1,6 @@
 const httpStatus = require('http-status');
 const { omit } = require('lodash');
-const User = require('../models/user');
+const { User } = require('../models/user');
 const { handler: errorHandler } = require('../middlewares/errorHandler');
 
 /**
@@ -84,7 +84,7 @@ exports.update = (req, res, next) => {
  */
 exports.list = async (req, res, next) => {
   try {
-    const users = await User.list(req.query);
+    const users = await User.findAll();
     const transformedUsers = users.map(user => user.transform());
     res.json(transformedUsers);
   } catch (error) {

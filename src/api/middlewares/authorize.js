@@ -1,6 +1,6 @@
-const router = require('express').Router();
 const expressJwt = require('express-jwt');
 const { User } = require('../models');
+const router = require('express').Router();
 
 router.use(
   expressJwt({ secret: process.env.SECRET_STRING }),
@@ -11,7 +11,7 @@ router.use(
       const user = await User.findById(req.user.id);
 
       if (!user) throw invalidToken;
-      if (!user.active) throw userBlocked;
+      if (!user.is_active) throw userBlocked;
 
       req.user = user;
       next();
