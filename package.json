@@ -13,7 +13,7 @@
   "scripts": {
     "precommit": "yarn lint",
     "prestart": "yarn docs",
-    "pretest": "NODE_ENV=test yarn migrate && yarn seeds",
+    "pretest": "NODE_ENV=test yarn migrate",
     "start": "yarn migrate && pm2 start ecosystem.config.js --only API --env production",
     "dev": "yarn migrate && pm2 start ecosystem.config.js --only API_LOCAL && pm2 logs",
     "lint": "eslint **/*.js --ignore-path .gitignore --ignore-pattern internals/scripts",
