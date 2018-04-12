@@ -1,6 +1,6 @@
 const httpStatus = require('http-status');
 const FB = require('fb');
-const { User } = require('../models');
+const { User } = require('../models/index');
 
 /**
  * Get user from database by email and password

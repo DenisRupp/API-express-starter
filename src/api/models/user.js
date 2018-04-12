@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 const bcrypt = require('bcryptjs');
 const moment = require('moment-timezone');
 const { omit } = require('lodash');
@@ -21,6 +22,7 @@ module.exports = (sequelize, DataTypes) => {
     email: {
       type: DataTypes.STRING,
       allowNull: false,
+      defaultValue: '',
       unique: { msg: 'Email already exists' },
       validate: {
         notEmpty: { msg: 'Email is required' },
@@ -29,6 +31,14 @@ module.exports = (sequelize, DataTypes) => {
     },
     password: {
       type: DataTypes.STRING,
+      defaultValue: '',
+      validate: {
+        notEmpty: { msg: 'Password is required' },
+        len: {
+          args: [6, 22],
+          msg: 'Password should be more then 6 and less then 12 chars',
+        },
+      },
     },
     role: {
       type: DataTypes.ENUM('user', 'admin'),
@@ -46,10 +56,12 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   /** Models Hooks */
-  User.beforeCreate(async (user) => {
+  User.beforeSave(async (user) => {
     try {
+      if (user._changed.email) {
+        user.email = user.email.toLowerCase();
+      }
       if (user._changed.password) {
-        // eslint-disable-next-line no-param-reassign
         user.password = await bcrypt.hash(user.password, 10);
       }
       return user;
