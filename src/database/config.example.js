@@ -14,7 +14,7 @@ module.exports = {
   },
   test: {
     username: 'postgres',
-    password: 'password',
+    password: '',
     database: 'node-boilerplate_test',
     host: '127.0.0.1',
     dialect: 'postgres',

@@ -1,0 +1,39 @@
+language: node_js
+node_js: '8'
+
+git:
+  depth: 3
+
+branches:
+  only:
+    - master
+    - /^greenkeeper/.*$/
+services:
+  - postgresql
+
+env:
+  global:
+    - NODE_ENV=test
+    - PORT=8000
+    - AUTH_TOKEN_LIFE=1h
+    - REFRESH_TOKEN_LIFE=3
+    - FACEBOOK_APP_ID=some_facebook_id
+    - FACEBOOK_SECRET=some_facebook_secret_code
+    - SECRET_STRING=some-secret-string
+
+script: yarn validate
+
+before_install: yarn global add greenkeeper-lockfile@1
+before_script:
+  - greenkeeper-lockfile-update
+  - psql -c 'create database node-boilerplate_test;' -U postgres
+  - cp src/database/config.example.js src/database/config.js
+
+
+after_script: greenkeeper-lockfile-upload
+
+# deploy:
+# - provider: script
+#   script: yarn deploy
+
+after_success: yarn coverage
