@@ -1,4 +1,6 @@
 # Express ES2017 REST API Boilerplate
+[![Build Status](https://travis-ci.org/DenisRupp/express-ES2017.svg?branch=master)](https://travis-ci.org/DenisRupp/express-ES2017)
+[![Coverage Status](https://coveralls.io/repos/github/DenisRupp/express-ES2017/badge.svg?branch=master)](https://coveralls.io/github/DenisRupp/express-ES2017?branch=master)
 
 Boilerplate/Generator/Starter Project for building RESTful APIs and microservices using Node.js, Express and MongoDB
 
