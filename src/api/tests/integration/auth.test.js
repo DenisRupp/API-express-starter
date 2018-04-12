@@ -4,7 +4,7 @@ const httpStatus = require('http-status');
 const { expect } = require('chai');
 const sinon = require('sinon');
 const app = require('../../../index');
-const UserFactory = require('../fixtures/user.fixture');
+const UserFactory = require('../factories/user.factory');
 const { User } = require('../../models');
 const authProviders = require('../../services/userProvider');
 
@@ -18,37 +18,26 @@ const fakeOAuthRequest = () => Promise.resolve({
   picture: 'test.jpg',
 });
 
-describe('Authentication API', () => {
-  let dbUser;
-  let user;
+describe('Authentication', () => {
   let refreshToken;
 
   beforeEach(async () => {
-    dbUser = UserFactory();
-    user = UserFactory();
-
-    console.log(user.email);
-
     await User.destroy({
       where: {},
       truncate: true,
     });
-    console.log(dbUser.email);
-    await dbUser.save();
   });
 
   afterEach(() => sandbox.restore());
 
-  describe('POST /v1/auth/register', () => {
+  describe('Registration via email', () => {
     it('should register a new user when request is ok', async () => {
+      const {
+        email, password, first_name, last_name,
+      } = UserFactory();
       const req = {
-        email: 'branstark@gmail.com',
-        password: 'mypassword',
-        first_name: 'Bran',
-        last_name: 'Stark',
-        role: 'admin',
+        email, password, first_name, last_name,
       };
-
       const res = await request(app)
         .post('/v1/auth/register')
         .send(req);
@@ -57,6 +46,52 @@ describe('Authentication API', () => {
       expect(res.body.tokens).to.have.a.property('refresh');
       expect(res.body.tokens).to.have.a.property('auth');
       expect(res.body.user).to.include(req);
+    });
+
+    it('should show error when emails has already taken', async () => {
+      const user = UserFactory().save();
+      const res = await request(app)
+        .post('/v1/auth/register')
+        .send(user);
+      expect(res.status).to.eq(httpStatus.BAD_REQUEST);
+      expect(res.body.errors).to.have.a.property('email');
+    });
+
+    it('should show errors for required fields', async () => {
+      const req = {};
+
+      const res = await request(app)
+        .post('/v1/auth/register')
+        .send(req);
+      expect(res.status).to.eq(httpStatus.BAD_REQUEST);
+      expect(res.body.errors).to.have.a.property('email');
+      expect(res.body.errors).to.have.a.property('first_name');
+      expect(res.body.errors).to.have.a.property('last_name');
+      expect(res.body.errors).to.have.a.property('password');
+    });
+  });
+
+  describe('Login via email', async () => {
+    it('should show success login', async () => {
+      let user = UserFactory();
+      const { email, password } = user;
+      user = await user.save();
+      const res = await request(app)
+        .post('/v1/auth/login')
+        .send({ email, password });
+      expect(res.status).to.eq(httpStatus.OK);
+      expect(res.body.tokens).to.have.a.property('refresh');
+      expect(res.body.tokens).to.have.a.property('auth');
+      expect(res.body.user.email).to.equal(user.email);
+    });
+
+    it('should show error with empty email and password', async () => {
+      const res = await request(app)
+        .post('/v1/auth/register')
+        .send({});
+      expect(res.status).to.eq(httpStatus.BAD_REQUEST);
+      expect(res.body.errors).to.have.a.property('email');
+      expect(res.body.errors).to.have.a.property('password');
     });
   });
 });
