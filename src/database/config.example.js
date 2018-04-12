@@ -4,7 +4,7 @@ module.exports = {
   development: {
     username: 'postgres',
     password: 'password',
-    database: 'node-boilerplate',
+    database: 'boilerplate',
     host: '127.0.0.1',
     dialect: 'postgres',
     operatorsAliases,
@@ -15,7 +15,7 @@ module.exports = {
   test: {
     username: 'postgres',
     password: '',
-    database: 'node-boilerplate_test',
+    database: 'boilerplate_test',
     host: '127.0.0.1',
     dialect: 'postgres',
     logging: false,
@@ -27,7 +27,7 @@ module.exports = {
   production: {
     username: 'postgres',
     password: 'password',
-    database: 'database_production',
+    database: 'boilerplate_production',
     host: '127.0.0.1',
     dialect: 'postgres',
     logging: false,
