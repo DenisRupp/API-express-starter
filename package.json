@@ -13,12 +13,14 @@
   "scripts": {
     "precommit": "yarn lint",
     "prestart": "yarn docs",
+    "pretest": "NODE_ENV=test yarn migrate",
     "start": "yarn migrate && pm2 start ecosystem.config.js --only API --env production",
     "dev": "yarn migrate && pm2 start ecosystem.config.js --only API_LOCAL && pm2 logs",
     "lint": "eslint **/*.js --ignore-path .gitignore --ignore-pattern internals/scripts",
     "lint:fix": "yarn lint -- --fix",
     "lint:watch": "yarn lint -- --watch",
-    "test": "cross-env NODE_ENV=test nyc --reporter=html --reporter=text mocha --timeout 20000 --recursive src/api/tests",
+    "test": "cross-env NODE_ENV=test mocha --timeout 20000 --recursive src/api/tests",
+    "test:coverage": "cross-env NODE_ENV=test nyc --reporter=html --reporter=text mocha --timeout 20000 --recursive src/api/tests",
     "test:unit": "cross-env NODE_ENV=test mocha src/api/tests/unit",
     "test:integration": "cross-env NODE_ENV=test mocha --timeout 20000 src/api/tests/integration",
     "test:watch": "cross-env NODE_ENV=test mocha --watch src/api/tests/unit",
@@ -69,6 +71,7 @@
     "express": "^4.16.3",
     "express-jwt": "^5.3.1",
     "express-validator": "^5.0.3",
+    "faker": "^4.1.0",
     "fb": "^2.0.0",
     "helmet": "^3.12.0",
     "http-status": "^1.0.1",
@@ -107,5 +110,7 @@
     "sinon-chai": "^2.10.0",
     "supertest": "^3.0.0"
   },
-  "eslintIgnore": ["src/api/database/, ecosystem.config.js"]
+  "eslintIgnore": [
+    "src/api/database/, ecosystem.config.js"
+  ]
 }

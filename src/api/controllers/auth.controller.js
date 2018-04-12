@@ -1,6 +1,6 @@
 const httpStatus = require('http-status');
 const { User } = require('../models');
-const userProvider = require('../middlewares/userProvider');
+const userProvider = require('../services/userProvider');
 const { generateRefreshToken, generateAuthToken } = require('../services/tokenGenerator');
 
 /**
