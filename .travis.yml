@@ -26,7 +26,7 @@ script: yarn validate
 before_install: yarn global add greenkeeper-lockfile@1
 before_script:
   - greenkeeper-lockfile-update
-  - psql -c 'create database node_boilerplate_test;' -U postgres
+  - psql -c 'create database boilerplate_test;' -U postgres
   - cp src/database/config.example.js src/database/config.js
 
 
