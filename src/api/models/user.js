@@ -82,6 +82,19 @@ module.exports = (sequelize, DataTypes) => {
     return (user && moment().isBefore(moment(user.refresh_token.expires))) ? user : false;
   };
 
+  /**
+   * Return count of all users and rows with offset
+   * @param page
+   * @param limit
+   * @returns {Promise<*>}
+   */
+  User.paginate = async function (page = 1, limit = 10) {
+    const offset = limit * (page - 1);
+    const result = await this.findAndCountAll({ limit, offset });
+    result.rows.map(user => user.transform());
+    return result;
+  };
+
   /** Object methods */
   const objectMethods = {
     /**

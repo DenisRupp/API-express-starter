@@ -1,6 +1,7 @@
 const httpStatus = require('http-status');
 const { omit } = require('lodash');
-const { User } = require('../models/user');
+const { User } = require('../models');
+const paginate = require('../middlewares/paginationResponse');
 const { handler: errorHandler } = require('../middlewares/errorHandler');
 
 /**
@@ -82,15 +83,15 @@ exports.update = (req, res, next) => {
  * Get user list
  * @public
  */
-exports.list = async (req, res, next) => {
+exports.list = [async (req, res, next) => {
   try {
-    const users = await User.findAll();
-    const transformedUsers = users.map(user => user.transform());
-    res.json(transformedUsers);
+    const { page, qty } = req.query;
+    req.pagination = await User.paginate(page, qty);
+    next();
   } catch (error) {
     next(error);
   }
-};
+}, paginate];
 
 /**
  * Delete user
