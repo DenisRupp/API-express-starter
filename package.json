@@ -26,7 +26,7 @@
     "test:watch": "cross-env NODE_ENV=test mocha --watch src/api/tests/unit",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "postcoverage": "opn coverage/lcov-report/index.html",
-    "validate": "yarn lint && yarn test:coverage",
+    "validate": "yarn lint && yarn test",
     "deploy": "sh ./deploy.sh",
     "docs": "apidoc -i src -o docs",
     "migrate": "sequelize db:migrate",
