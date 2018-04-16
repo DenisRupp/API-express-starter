@@ -2,7 +2,6 @@ const httpStatus = require('http-status');
 const { omit } = require('lodash');
 const { User } = require('../models');
 const paginate = require('../middlewares/paginationResponse');
-const { handler: errorHandler } = require('../middlewares/errorHandler');
 
 /**
  * Load user and append to req.
@@ -10,11 +9,11 @@ const { handler: errorHandler } = require('../middlewares/errorHandler');
  */
 exports.load = async (req, res, next, id) => {
   try {
-    const user = await User.get(id);
+    const user = await User.findById(id);
     req.locals = { user };
     return next();
   } catch (error) {
-    return errorHandler(error, req, res);
+    return next(e);
   }
 };
 
@@ -42,26 +41,6 @@ exports.create = async (req, res, next) => {
     res.json(savedUser.transform());
   } catch (error) {
     next(error);
-  }
-};
-
-/**
- * Replace existing user
- * @public
- */
-exports.replace = async (req, res, next) => {
-  try {
-    const { user } = req.locals;
-    const newUser = new User(req.body);
-    const ommitRole = user.role !== 'admin' ? 'role' : '';
-    const newUserObject = omit(newUser.toObject(), 'id', ommitRole);
-
-    await user.update(newUserObject, { override: true, upsert: true });
-    const savedUser = await User.findById(user.id);
-
-    res.json(savedUser.transform());
-  } catch (error) {
-    next(User.checkDuplicateEmail(error));
   }
 };
 
@@ -100,7 +79,7 @@ exports.list = [async (req, res, next) => {
 exports.remove = (req, res, next) => {
   const { user } = req.locals;
 
-  user.remove()
-    .then(() => res.status(httpStatus.NO_CONTENT).end())
+  user.destroy()
+    .then(() => res.status(httpStatus.NO_CONTENT).json({ result: 'delete' }))
     .catch(e => next(e));
 };
