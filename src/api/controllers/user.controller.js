@@ -12,7 +12,7 @@ exports.load = async (req, res, next, id) => {
     const user = await User.findById(id);
     req.locals = { user };
     return next();
-  } catch (error) {
+  } catch (e) {
     return next(e);
   }
 };
