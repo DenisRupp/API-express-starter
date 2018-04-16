@@ -35,8 +35,8 @@ module.exports = (sequelize, DataTypes) => {
       validate: {
         notEmpty: { msg: 'Password is required' },
         len: {
-          args: [6, 22],
-          msg: 'Password should be more then 6 and less then 12 chars',
+          args: [6],
+          msg: 'Password should be more then 6 chars',
         },
       },
     },
@@ -80,6 +80,19 @@ module.exports = (sequelize, DataTypes) => {
   User.getByRefreshToken = async function (token) {
     const user = await this.findOne({ where: { 'refresh_token.token': token } });
     return (user && moment().isBefore(moment(user.refresh_token.expires))) ? user : false;
+  };
+
+  /**
+   * Return count of all users and rows with offset
+   * @param page
+   * @param limit
+   * @returns {Promise<*>}
+   */
+  User.paginate = async function (page = 1, limit = 10) {
+    const offset = limit * (page - 1);
+    const result = await this.findAndCountAll({ limit, offset });
+    result.rows.map(user => user.transform());
+    return result;
   };
 
   /** Object methods */

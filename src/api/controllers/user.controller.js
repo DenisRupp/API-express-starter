@@ -1,7 +1,7 @@
 const httpStatus = require('http-status');
 const { omit } = require('lodash');
-const { User } = require('../models/user');
-const { handler: errorHandler } = require('../middlewares/errorHandler');
+const { User } = require('../models');
+const paginate = require('../middlewares/paginationResponse');
 
 /**
  * Load user and append to req.
@@ -9,11 +9,11 @@ const { handler: errorHandler } = require('../middlewares/errorHandler');
  */
 exports.load = async (req, res, next, id) => {
   try {
-    const user = await User.get(id);
+    const user = await User.findById(id);
     req.locals = { user };
     return next();
   } catch (error) {
-    return errorHandler(error, req, res);
+    return next(e);
   }
 };
 
@@ -45,26 +45,6 @@ exports.create = async (req, res, next) => {
 };
 
 /**
- * Replace existing user
- * @public
- */
-exports.replace = async (req, res, next) => {
-  try {
-    const { user } = req.locals;
-    const newUser = new User(req.body);
-    const ommitRole = user.role !== 'admin' ? 'role' : '';
-    const newUserObject = omit(newUser.toObject(), 'id', ommitRole);
-
-    await user.update(newUserObject, { override: true, upsert: true });
-    const savedUser = await User.findById(user.id);
-
-    res.json(savedUser.transform());
-  } catch (error) {
-    next(User.checkDuplicateEmail(error));
-  }
-};
-
-/**
  * Update existing user
  * @public
  */
@@ -82,15 +62,15 @@ exports.update = (req, res, next) => {
  * Get user list
  * @public
  */
-exports.list = async (req, res, next) => {
+exports.list = [async (req, res, next) => {
   try {
-    const users = await User.findAll();
-    const transformedUsers = users.map(user => user.transform());
-    res.json(transformedUsers);
+    const { page, qty } = req.query;
+    req.pagination = await User.paginate(page, qty);
+    next();
   } catch (error) {
     next(error);
   }
-};
+}, paginate];
 
 /**
  * Delete user
@@ -99,7 +79,7 @@ exports.list = async (req, res, next) => {
 exports.remove = (req, res, next) => {
   const { user } = req.locals;
 
-  user.remove()
-    .then(() => res.status(httpStatus.NO_CONTENT).end())
+  user.destroy()
+    .then(() => res.status(httpStatus.NO_CONTENT).json({ result: 'delete' }))
     .catch(e => next(e));
 };

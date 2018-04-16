@@ -19,7 +19,6 @@ const fakeOAuthRequest = () => Promise.resolve({
 });
 
 describe('Authentication', () => {
-  let refreshToken;
 
   beforeEach(async () => {
     await User.destroy({

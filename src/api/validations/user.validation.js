@@ -10,13 +10,13 @@ module.exports = {
 
   // POST /v1/users
   createUser: [
-    body('email', 'Invalid email').isEmail().normalizeEmail(),
+    body('email', 'Invalid email').isEmail(),
     body('password', 'Passwords must be at least 8 chars long').isLength({ min: 8 }),
   ],
 
   // PATCH /v1/users/:userId
   updateUser: [
-    body('email', 'Invalid email').isEmail().normalizeEmail(),
+    body('email', 'Invalid email').isEmail(),
     body('password', 'Passwords must be at least 8 chars long').isLength({ min: 8 }),
     param('userId', 'User id is required').exists(),
   ],
