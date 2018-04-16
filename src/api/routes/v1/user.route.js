@@ -23,12 +23,9 @@ router.route('/')
    * @apiHeader {String} Athorization  User's access token
    *
    * @apiParam  {Number{1-}}         [page=1]     List page
-   * @apiParam  {Number{1-100}}      [perPage=1]  Users per page
-   * @apiParam  {String}             [name]       User's name
-   * @apiParam  {String}             [email]      User's email
-   * @apiParam  {String=user,admin}  [role]       User's role
+   * @apiParam  {Number{1-100}}      [qty=1]  Users per page
    *
-   * @apiSuccess {Object[]} users List of users.
+   * @apiSuccess {PaginationObject[]} users List of users.
    *
    * @apiError (Unauthorized 401)  Unauthorized  Only authenticated users can access the data
    * @apiError (Forbidden 403)     Forbidden     Only admins can access the data
@@ -44,13 +41,14 @@ router.route('/')
    *
    * @apiHeader {String} Athorization  User's access token
    *
-   * @apiParam  {String}             email     User's email
-   * @apiParam  {String{6..128}}     password  User's password
-   * @apiParam  {String{..128}}      [name]    User's name
-   * @apiParam  {String=user,admin}  [role]    User's role
+   * @apiParam  {String}             email        User's email
+   * @apiParam  {String{6..128}}     password     User's password
+   * @apiParam  {String{..128}}      first_name   User's first name
+   * @apiParam  {String{..128}}      last_name    User's last name
    *
    * @apiSuccess (Created 201) {String}  id         User's id
-   * @apiSuccess (Created 201) {String}  name       User's name
+   * @apiSuccess (Created 201) {String}  first_name User's first name
+   * @apiSuccess (Created 201) {String}  last_name  User's last name
    * @apiSuccess (Created 201) {String}  email      User's email
    * @apiSuccess (Created 201) {String}  role       User's role
    * @apiSuccess (Created 201) {Date}    createdAt  Timestamp
@@ -74,7 +72,8 @@ router.route('/profile')
    * @apiHeader {String} Athorization  User's access token
    *
    * @apiSuccess {String}  id         User's id
-   * @apiSuccess {String}  name       User's name
+   * @apiSuccess {String}  first_name User's first name
+   * @apiSuccess {String}  last_name  User's last name
    * @apiSuccess {String}  email      User's email
    * @apiSuccess {String}  role       User's role
    * @apiSuccess {Date}    createdAt  Timestamp
@@ -96,7 +95,8 @@ router.route('/:userId')
    * @apiHeader {String} Athorization  User's access token
    *
    * @apiSuccess {String}  id         User's id
-   * @apiSuccess {String}  name       User's name
+   * @apiSuccess {String}  first_name User's first name
+   * @apiSuccess {String}  last_name  User's last name
    * @apiSuccess {String}  email      User's email
    * @apiSuccess {String}  role       User's role
    * @apiSuccess {Date}    createdAt  Timestamp
@@ -116,14 +116,16 @@ router.route('/:userId')
    *
    * @apiHeader {String} Athorization  User's access token
    *
-   * @apiParam  {String}             email     User's email
-   * @apiParam  {String{6..128}}     password  User's password
-   * @apiParam  {String{..128}}      [name]    User's name
-   * @apiParam  {String=user,admin}  [role]    User's role
+   * @apiParam  {String}             email        User's email
+   * @apiParam  {String{6..128}}     password     User's password
+   * @apiParam  {String{..128}}      first_name   User's first name
+   * @apiParam  {String{..128}}      last_name    User's last name
+   * @apiParam  {String=user,admin}  [role]       User's role
    * (You must be an admin to change the user's role)
    *
    * @apiSuccess {String}  id         User's id
-   * @apiSuccess {String}  name       User's name
+   * @apiSuccess {String}  first_name User's first name
+   * @apiSuccess {String}  last_name  User's last name
    * @apiSuccess {String}  email      User's email
    * @apiSuccess {String}  role       User's role
    * @apiSuccess {Date}    createdAt  Timestamp
