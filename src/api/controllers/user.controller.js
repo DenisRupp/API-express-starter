@@ -12,7 +12,7 @@ exports.load = async (req, res, next, id) => {
     const user = await User.findById(id);
     req.locals = { user };
     return next();
-  } catch (error) {
+  } catch (e) {
     return next(e);
   }
 };
@@ -39,8 +39,8 @@ exports.create = async (req, res, next) => {
     const savedUser = await user.save();
     res.status(httpStatus.CREATED);
     res.json(savedUser.transform());
-  } catch (error) {
-    next(error);
+  } catch (e) {
+    next(e);
   }
 };
 
@@ -48,14 +48,16 @@ exports.create = async (req, res, next) => {
  * Update existing user
  * @public
  */
-exports.update = (req, res, next) => {
+exports.update = async (req, res, next) => {
   const ommitRole = req.locals.user.role !== 'admin' ? 'role' : '';
   const updatedUser = omit(req.body, ommitRole);
-  const user = Object.assign(req.locals.user, updatedUser);
-
-  user.save()
-    .then(savedUser => res.json(savedUser.transform()))
-    .catch(e => next(e));
+  let user = Object.assign(req.locals.user, updatedUser);
+  user = await user.save();
+  try {
+    res.json(user.transform());
+  } catch (e) {
+    next(e);
+  }
 };
 
 /**
@@ -67,8 +69,8 @@ exports.list = [async (req, res, next) => {
     const { page, qty } = req.query;
     req.pagination = await User.paginate(page, qty);
     next();
-  } catch (error) {
-    next(error);
+  } catch (e) {
+    next(e);
   }
 }, paginate];
 
@@ -76,10 +78,13 @@ exports.list = [async (req, res, next) => {
  * Delete user
  * @public
  */
-exports.remove = (req, res, next) => {
+exports.remove = async (req, res, next) => {
   const { user } = req.locals;
 
-  user.destroy()
-    .then(() => res.status(httpStatus.NO_CONTENT).json({ result: 'delete' }))
-    .catch(e => next(e));
+  try {
+    await user.destroy();
+    res.status(httpStatus.NO_CONTENT).json({ result: 'delete' });
+  } catch (e) {
+    next(e);
+  }
 };
