@@ -23,6 +23,9 @@ env:
     - FACEBOOK_SECRET=some_facebook_secret_code
     - SECRET_STRING=some-secret-string
     - SITE_URL=express-api.com
+    - EMAIL_HOST=smtp.gmail.com
+    - EMAIL_SENDER=some.email@gmail.com
+    - EMAIL_PASSWORD=some_pass
 
 script: yarn validate
 
