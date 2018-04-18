@@ -85,7 +85,9 @@
     "npm-merge-driver": "^2.3.5",
     "pm2": "^2.10.1",
     "sequelize": "^4.37.4",
-    "sequelize-cli": "^4.0.0"
+    "sequelize-cli": "^4.0.0",
+    "pg": "^7.4.1",
+    "pg-hstore": "^2.3.2"
   },
   "devDependencies": {
     "apidoc": "^0.17.5",
