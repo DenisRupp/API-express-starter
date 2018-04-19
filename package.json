@@ -83,11 +83,11 @@
     "nodemailer": "^4.6.4",
     "nodemailer-express-handlebars": "^3.0.0",
     "npm-merge-driver": "^2.3.5",
+    "pg": "^7.4.1",
+    "pg-hstore": "^2.3.2",
     "pm2": "^2.10.1",
     "sequelize": "^4.37.4",
-    "sequelize-cli": "^4.0.0",
-    "pg": "^7.4.1",
-    "pg-hstore": "^2.3.2"
+    "sequelize-cli": "^4.0.0"
   },
   "devDependencies": {
     "apidoc": "^0.17.5",
@@ -101,7 +101,7 @@
     "mocha": "^3.3.0",
     "nyc": "^11.6.0",
     "opn-cli": "^3.1.0",
-    "sinon": "^4.4.6",
+    "sinon": "^4.5.0",
     "sinon-chai": "^2.10.0",
     "supertest": "^3.0.0"
   },
