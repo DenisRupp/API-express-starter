@@ -2,7 +2,7 @@ const sinon = require('sinon');
 const { expect } = require('chai');
 const nodemailer = require('nodemailer');
 const faker = require('faker');
-const mailerTest = require('../../services/mailer');
+const mailer = require('../../services/mailer');
 
 const sandbox = sinon.sandbox.create();
 
@@ -32,7 +32,7 @@ describe('Test mailer service', () => {
 
   it('Should send email with right params', async () => {
     const sendMailSpy = sinon.spy(transport, 'sendMail');
-    const mail = await mailerTest(data.to, data.subject, data.template, data.context);
+    const mail = await mailer(data.to, data.subject, data.template, data.context);
     expect(sendMailSpy.getCall(0).args[0]).to.include(data);
     expect(mail).to.eq('Success');
   });
