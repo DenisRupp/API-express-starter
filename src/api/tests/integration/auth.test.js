@@ -112,6 +112,7 @@ describe('Authentication', () => {
       expect(res.body.tokens).to.have.a.property('auth');
       expect(res.body.tokens).to.have.a.property('refresh');
       expect(res.body.user.services.google).to.equal(id);
+
       sandbox.restore();
     });
 
@@ -123,24 +124,84 @@ describe('Authentication', () => {
       sandbox.stub(strategies, 'google').callsFake(() => {
         return fakeOAuthRequest('google', id, user.email);
       });
-      return request(app)
+
+      const res = await request(app)
         .post('/v1/auth/google')
         .send({ access_token: 'some_token' })
-        .expect(httpStatus.OK)
-        .then((res) => {
-          expect(res.body.tokens).to.have.a.property('auth');
-          expect(res.body.tokens).to.have.a.property('refresh');
-          expect(res.body.user.email).to.be.eq(user.email);
-        });
+        .expect(httpStatus.OK);
+
+      expect(res.body.tokens).to.have.a.property('auth');
+      expect(res.body.tokens).to.have.a.property('refresh');
+      expect(res.body.user.email).to.be.eq(user.email);
+
+      sandbox.restore();
     });
 
     it('should return error when access_token is not provided', async () => {
-      return request(app)
+      const res = await request(app)
         .post('/v1/auth/google')
-        .expect(httpStatus.BAD_REQUEST)
-        .then((res) => {
-          expect(res.body.errors.access_token).to.eq('Access token is required');
-        });
+        .expect(httpStatus.BAD_REQUEST);
+
+      expect(res.body.errors.access_token).to.eq('Access token is required');
+    });
+  });
+
+  describe('Login and register using facebook', async () => {
+    const id = 'some_id';
+
+    it('should create a new user and return an accessToken when user does not exist', async () => {
+      sandbox.stub(strategies, 'facebook').callsFake(() => {
+        return fakeOAuthRequest('facebook', id);
+      });
+      const res = await request(app)
+        .post('/v1/auth/facebook')
+        .send({ access_token: 'some_token' })
+        .expect(httpStatus.OK);
+
+      expect(res.body.tokens).to.have.a.property('auth');
+      expect(res.body.tokens).to.have.a.property('refresh');
+      expect(res.body.user.services.facebook).to.equal(id);
+
+      sandbox.restore();
+    });
+
+    it('should return an accessToken when user already exists', async () => {
+      const user = UserFactory();
+      user.services = { facebook: id };
+      await user.save();
+
+      sandbox.stub(strategies, 'facebook').callsFake(() => {
+        return fakeOAuthRequest('facebook', id, user.email);
+      });
+      const res = await request(app)
+        .post('/v1/auth/facebook')
+        .send({ access_token: 'some_token' })
+        .expect(httpStatus.OK);
+
+      expect(res.body.tokens).to.have.a.property('auth');
+      expect(res.body.tokens).to.have.a.property('refresh');
+      expect(res.body.user.email).to.be.eq(user.email);
+
+      sandbox.restore();
+    });
+
+    it('should return error when access_token is not provided', async () => {
+      const res = await request(app)
+        .post('/v1/auth/facebook')
+        .expect(httpStatus.BAD_REQUEST);
+
+      expect(res.body.errors.access_token).to.eq('Access token is required');
+    });
+
+    it('should return error when access_token is not valid', async () => {
+      sandbox.stub(strategies, 'facebook').rejects({ name: 'AuthStrategiesError', status: httpStatus.UNAUTHORIZED });
+
+      await request(app)
+        .post('/v1/auth/facebook')
+        .send({ access_token: 'some_token' })
+        .expect(httpStatus.UNAUTHORIZED);
+
+      sandbox.restore();
     });
   });
 });

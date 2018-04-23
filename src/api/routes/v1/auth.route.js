@@ -3,7 +3,6 @@ const validate = require('../../validations/handler');
 const controller = require('../../controllers/auth.controller');
 const rules = require('../../validations/auth.validation');
 const passport = require('passport');
-const { oAuth } = require('../../validations/auth.validation');
 
 const router = express.Router();
 
@@ -120,7 +119,7 @@ router.route('/refresh-token')
  * @apiError (Unauthorized 401)  Unauthorized    Incorrect access_token
  */
 router.route('/facebook')
-  .post(validate(rules.oAuth), controller.oAuth);
+  .post(validate(rules.oAuth), passport.authenticate('facebook', { session: false }), controller.oAuth);
 
 
 /**
@@ -142,6 +141,6 @@ router.route('/facebook')
  * @apiError (Unauthorized 401)  Unauthorized    Incorrect access_token
  */
 router.route('/google')
-  .post(validate(oAuth), passport.authenticate('google', { session: false }), controller.oAuth);
+  .post(validate(rules.oAuth), passport.authenticate('google', { session: false }), controller.oAuth);
 
 module.exports = router;
