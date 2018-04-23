@@ -7,6 +7,8 @@ const app = require('../../../index');
 const UserFactory = require('../factories/user.factory');
 const { User } = require('../../models');
 const strategies = require('../../services/strategies');
+const getAuthorizedUser = require('../helpers/user.auth');
+
 
 const sandbox = sinon.createSandbox();
 
@@ -100,6 +102,8 @@ describe('Authentication', () => {
   describe('Login and register using google', async () => {
     const id = 'some_id';
 
+    afterEach(() => sandbox.restore());
+
     it('should create a new user and return an accessToken when user does not exist', async () => {
       sandbox.stub(strategies, 'google').callsFake(() => {
         return fakeOAuthRequest('google', id);
@@ -112,8 +116,6 @@ describe('Authentication', () => {
       expect(res.body.tokens).to.have.a.property('auth');
       expect(res.body.tokens).to.have.a.property('refresh');
       expect(res.body.user.services.google).to.equal(id);
-
-      sandbox.restore();
     });
 
     it('should return an accessToken when user already exists', async () => {
@@ -133,8 +135,6 @@ describe('Authentication', () => {
       expect(res.body.tokens).to.have.a.property('auth');
       expect(res.body.tokens).to.have.a.property('refresh');
       expect(res.body.user.email).to.be.eq(user.email);
-
-      sandbox.restore();
     });
 
     it('should return error when access_token is not provided', async () => {
@@ -146,8 +146,30 @@ describe('Authentication', () => {
     });
   });
 
+  describe('Refresh token route', async () => {
+    it('should return tokens for valid refresh token', async () => {
+      const userAuth = await getAuthorizedUser();
+      const res = await request(app)
+        .post('/v1/auth/refresh-token')
+        .send({ refresh_token: userAuth.user.refresh_token.token })
+        .expect(httpStatus.OK);
+
+      expect(res.body.tokens).to.have.a.property('auth');
+      expect(res.body.tokens).to.have.a.property('refresh');
+      expect(res.body.user.email).to.be.eq(userAuth.user.email);
+    });
+
+    it('should return errors for invalid refresh token', async () => {
+      await request(app)
+        .post('/v1/auth/refresh-token')
+        .send({ refresh_token: 'wrong token' })
+        .expect(httpStatus.UNAUTHORIZED);
+    });
+  });
+
   describe('Login and register using facebook', async () => {
     const id = 'some_id';
+    afterEach(() => sandbox.restore());
 
     it('should create a new user and return an accessToken when user does not exist', async () => {
       sandbox.stub(strategies, 'facebook').callsFake(() => {
@@ -161,8 +183,6 @@ describe('Authentication', () => {
       expect(res.body.tokens).to.have.a.property('auth');
       expect(res.body.tokens).to.have.a.property('refresh');
       expect(res.body.user.services.facebook).to.equal(id);
-
-      sandbox.restore();
     });
 
     it('should return an accessToken when user already exists', async () => {
@@ -181,8 +201,6 @@ describe('Authentication', () => {
       expect(res.body.tokens).to.have.a.property('auth');
       expect(res.body.tokens).to.have.a.property('refresh');
       expect(res.body.user.email).to.be.eq(user.email);
-
-      sandbox.restore();
     });
 
     it('should return error when access_token is not provided', async () => {
@@ -195,13 +213,10 @@ describe('Authentication', () => {
 
     it('should return error when access_token is not valid', async () => {
       sandbox.stub(strategies, 'facebook').rejects({ name: 'AuthStrategiesError', status: httpStatus.UNAUTHORIZED });
-
       await request(app)
         .post('/v1/auth/facebook')
         .send({ access_token: 'some_token' })
         .expect(httpStatus.UNAUTHORIZED);
-
-      sandbox.restore();
     });
   });
 });
