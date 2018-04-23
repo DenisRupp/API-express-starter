@@ -53,19 +53,7 @@ exports.login = [userProvider.getLocalUser, authResponse];
  * Returns jwt token
  * @public
  */
-exports.oAuth = [
-  userProvider.getFacebookUser,
-  async (req, res, next) => {
-    try {
-      if (!req.user) {
-        req.user = await new User(req.facebookUser).save();
-      }
-    } catch (error) {
-      next(error);
-    }
-  },
-  authResponse,
-];
+exports.oAuth = authResponse;
 
 /**
  * Returns a new jwt when given a valid refresh token

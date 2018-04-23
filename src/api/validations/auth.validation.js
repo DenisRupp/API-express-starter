@@ -8,6 +8,7 @@ module.exports = {
   ],
 
   // POST /v1/auth/facebook
+  // POST /v1/auth/google
   oAuth: [
     body('access_token', 'Access token is required').exists(),
   ],

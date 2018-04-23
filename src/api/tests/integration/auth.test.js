@@ -6,19 +6,22 @@ const sinon = require('sinon');
 const app = require('../../../index');
 const UserFactory = require('../factories/user.factory');
 const { User } = require('../../models');
-const authProviders = require('../../services/userProvider');
+const strategies = require('../../services/strategies');
 
 const sandbox = sinon.createSandbox();
 
-const fakeOAuthRequest = () => Promise.resolve({
-  service: 'facebook',
-  id: '123',
-  name: 'user',
-  email: 'test@test.com',
-  picture: 'test.jpg',
-});
-
 describe('Authentication', () => {
+  const fakeOAuthRequest = (service, id, savedEmail = false) => {
+    const { email: newEmail, first_name, last_name } = UserFactory();
+    const email = (!savedEmail) ? newEmail : savedEmail;
+    return Promise.resolve({
+      id,
+      email,
+      service,
+      last_name,
+      first_name,
+    });
+  };
 
   beforeEach(async () => {
     await User.destroy({
@@ -91,6 +94,53 @@ describe('Authentication', () => {
       expect(res.status).to.eq(httpStatus.BAD_REQUEST);
       expect(res.body.errors).to.have.a.property('email');
       expect(res.body.errors).to.have.a.property('password');
+    });
+  });
+
+  describe('Login and register using google', async () => {
+    const id = 'some_id';
+
+    it('should create a new user and return an accessToken when user does not exist', async () => {
+      sandbox.stub(strategies, 'google').callsFake(() => {
+        return fakeOAuthRequest('google', id);
+      });
+      const res = await request(app)
+        .post('/v1/auth/google')
+        .send({ access_token: 'some_token' })
+        .expect(httpStatus.OK);
+
+      expect(res.body.tokens).to.have.a.property('auth');
+      expect(res.body.tokens).to.have.a.property('refresh');
+      expect(res.body.user.services.google).to.equal(id);
+      sandbox.restore();
+    });
+
+    it('should return an accessToken when user already exists', async () => {
+      const user = UserFactory();
+      user.services = { google: id };
+      await user.save();
+
+      sandbox.stub(strategies, 'google').callsFake(() => {
+        return fakeOAuthRequest('google', id, user.email);
+      });
+      return request(app)
+        .post('/v1/auth/google')
+        .send({ access_token: 'some_token' })
+        .expect(httpStatus.OK)
+        .then((res) => {
+          expect(res.body.tokens).to.have.a.property('auth');
+          expect(res.body.tokens).to.have.a.property('refresh');
+          expect(res.body.user.email).to.be.eq(user.email);
+        });
+    });
+
+    it('should return error when access_token is not provided', async () => {
+      return request(app)
+        .post('/v1/auth/google')
+        .expect(httpStatus.BAD_REQUEST)
+        .then((res) => {
+          expect(res.body.errors.access_token).to.eq('Access token is required');
+        });
     });
   });
 });
