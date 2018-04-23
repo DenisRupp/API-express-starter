@@ -9,6 +9,8 @@ const routes = require('../api/routes/v1');
 const { logs } = require('./vars');
 const errorHandler = require('../api/middlewares/errorHandler');
 const httpStatus = require('http-status');
+const strategies = require('./passport');
+const passport = require('passport');
 
 /**
 * Express instance
@@ -35,6 +37,11 @@ app.use(helmet());
 
 // enable CORS - Cross Origin Resource Sharing
 app.use(cors());
+
+// enable authentication
+app.use(passport.initialize());
+passport.use('facebook', strategies.facebook);
+passport.use('google', strategies.google);
 
 // mount api v1 routes
 app.use('/v1', routes);

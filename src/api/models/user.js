@@ -1,6 +1,7 @@
 /* eslint-disable no-param-reassign */
 const bcrypt = require('bcryptjs');
 const moment = require('moment-timezone');
+const uuidv4 = require('uuid/v4');
 const { omit } = require('lodash');
 
 module.exports = (sequelize, DataTypes) => {
@@ -39,6 +40,9 @@ module.exports = (sequelize, DataTypes) => {
           msg: 'Password should be more then 6 chars',
         },
       },
+    },
+    services: {
+      type: DataTypes.JSONB,
     },
     role: {
       type: DataTypes.ENUM('user', 'admin'),
@@ -93,6 +97,22 @@ module.exports = (sequelize, DataTypes) => {
     const result = await this.findAndCountAll({ limit, offset });
     result.rows.map(user => user.transform());
     return result;
+  };
+
+  User.oAuthLogin = async function ({
+    service, id, email, first_name, last_name,
+  }) {
+    const user = await this.findOne({ where: [{ [`services.${service}`]: id }, { email }] });
+    if (user) {
+      user.services[service] = id;
+      if (!user.first_name) user.first_name = first_name;
+      if (!user.last_name) user.last_name = last_name;
+      return user.save();
+    }
+    const password = uuidv4();
+    return this.create({
+      services: { [service]: id }, email, password, first_name, last_name,
+    });
   };
 
   /** Object methods */

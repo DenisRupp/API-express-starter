@@ -2,6 +2,7 @@ const express = require('express');
 const validate = require('../../validations/handler');
 const controller = require('../../controllers/auth.controller');
 const rules = require('../../validations/auth.validation');
+const passport = require('passport');
 
 const router = express.Router();
 
@@ -118,7 +119,28 @@ router.route('/refresh-token')
  * @apiError (Unauthorized 401)  Unauthorized    Incorrect access_token
  */
 router.route('/facebook')
-  .post(validate(rules.oAuth), controller.oAuth);
+  .post(validate(rules.oAuth), passport.authenticate('facebook', { session: false }), controller.oAuth);
 
+
+/**
+ * @api {post} v1/auth/google Google Login
+ * @apiDescription Login with google. Creates a new user if it does not exist
+ * @apiVersion 1.0.0
+ * @apiName GoogleLogin
+ * @apiGroup Auth
+ * @apiPermission public
+ *
+ * @apiParam  {String}  access_token  Google's access_token
+ *
+ * @apiSuccess {String}  tokenType     Access Token's type
+ * @apiSuccess {String}  accessToken   Authorization Token
+ * @apiSuccess {String}  refreshToken  Token to get a new accpessToken after expiration time
+ * @apiSuccess {Number}  expiresIn     Access Token's expiration time in miliseconds
+ *
+ * @apiError (Bad Request 400)  ValidationError  Some parameters may contain invalid values
+ * @apiError (Unauthorized 401)  Unauthorized    Incorrect access_token
+ */
+router.route('/google')
+  .post(validate(rules.oAuth), passport.authenticate('google', { session: false }), controller.oAuth);
 
 module.exports = router;

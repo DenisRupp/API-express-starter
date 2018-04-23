@@ -1,6 +1,6 @@
 const httpStatus = require('http-status');
 const { User } = require('../models');
-const userProvider = require('../services/userProvider');
+const { local: getLocalUser } = require('../services/strategies');
 const { generateRefreshToken, generateAuthToken } = require('../services/tokenGenerator');
 
 /**
@@ -46,26 +46,14 @@ exports.register = [
  * Returns jwt token if valid username and password is provided
  * @public
  */
-exports.login = [userProvider.getLocalUser, authResponse];
+exports.login = [getLocalUser, authResponse];
 
 /**
  * login with an existing user or creates a new one if valid accessToken token
  * Returns jwt token
  * @public
  */
-exports.oAuth = [
-  userProvider.getFacebookUser,
-  async (req, res, next) => {
-    try {
-      if (!req.user) {
-        req.user = await new User(req.facebookUser).save();
-      }
-    } catch (error) {
-      next(error);
-    }
-  },
-  authResponse,
-];
+exports.oAuth = authResponse;
 
 /**
  * Returns a new jwt when given a valid refresh token
