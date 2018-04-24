@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const moment = require('moment-timezone');
 const uuidv4 = require('uuid/v4');
 const { omit } = require('lodash');
+const mailer = require('../services/mailer');
 
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define('User', {
@@ -48,11 +49,11 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.ENUM('user', 'admin'),
       defaultValue: 'user',
     },
-    facebook_id: {
+    refresh_token: DataTypes.JSONB,
+    reset_token: {
       type: DataTypes.STRING,
       unique: true,
     },
-    refresh_token: DataTypes.JSONB,
     is_active: {
       defaultValue: true,
       type: DataTypes.BOOLEAN,
@@ -124,7 +125,7 @@ module.exports = (sequelize, DataTypes) => {
     transform() {
       return omit(
         this.get({ plain: true }),
-        ['password', 'refresh_token', 'facebook_id'],
+        ['password', 'refresh_token', 'reset_token'],
       );
     },
 
@@ -135,6 +136,16 @@ module.exports = (sequelize, DataTypes) => {
      */
     async verifyPassword(password) {
       return bcrypt.compare(password, this.password);
+    },
+
+    /**
+     * Create reset password token and send email
+     * @returns {Promise}
+     */
+    async resetPassword() {
+      this.reset_token = uuidv4();
+      const user = await this.save();
+      return mailer(user.email, 'Reset password email', 'reset-password', { user });
     },
   };
 
