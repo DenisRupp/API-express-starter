@@ -8,7 +8,8 @@ const UserFactory = require('../factories/user.factory');
 const { User } = require('../../models');
 const strategies = require('../../services/strategies');
 const getAuthorizedUser = require('../helpers/user.auth');
-
+const nodemailer = require('nodemailer');
+const uuidv4 = require('uuid/v4');
 
 const sandbox = sinon.createSandbox();
 
@@ -164,6 +165,64 @@ describe('Authentication', () => {
         .post('/v1/auth/refresh-token')
         .send({ refresh_token: 'wrong token' })
         .expect(httpStatus.UNAUTHORIZED);
+    });
+  });
+
+  describe('Reset password', () => {
+    it('should send email with reset password token', async () => {
+      const transport = {
+        sendMail: () => Promise.resolve('Success'),
+        use: () => this,
+        close: () => Promise.resolve('Success'),
+      };
+      const sendMailSpy = sinon.spy(transport, 'sendMail');
+      const user = await UserFactory().save();
+
+      sandbox.stub(nodemailer, 'createTransport').returns(transport);
+
+      const res = await request(app)
+        .post('/v1/auth/reset-password')
+        .send({ email: user.email })
+        .expect(httpStatus.OK);
+
+      sinon.assert.callCount(sendMailSpy, 1);
+      expect(res.body.message).to.eq('Email successfully send');
+      sandbox.restore();
+    });
+
+    it('should show error on invalid email', async () => {
+      const res = await request(app)
+        .post('/v1/auth/reset-password')
+        .send({ email: 'some@email.com' })
+        .expect(httpStatus.BAD_REQUEST);
+
+      expect(res.body.message).to.eq('Can\'t find user with this email');
+    });
+
+    it('should set new password and delete  after reset', async () => {
+      const newUser = await UserFactory();
+      newUser.reset_token = uuidv4();
+      const user = await newUser.save();
+      const { reset_token, id } = user;
+      const res = await request(app)
+        .put('/v1/auth/reset-password')
+        .send({ reset_token, id, password: 'some_new_pass' })
+        .expect(httpStatus.OK);
+
+      expect(res.body.tokens).to.have.a.property('auth');
+      expect(res.body.tokens).to.have.a.property('refresh');
+      expect(res.body.user.id).to.equal(id);
+    });
+
+    it('should show error with invalid token', async () => {
+      const newUser = await UserFactory();
+      newUser.reset_token = uuidv4();
+      const user = await newUser.save();
+      const { id } = user;
+      await request(app)
+        .put('/v1/auth/reset-password')
+        .send({ reset_token: 'some_token', id, password: 'some_new_pass' })
+        .expect(httpStatus.BAD_REQUEST);
     });
   });
 

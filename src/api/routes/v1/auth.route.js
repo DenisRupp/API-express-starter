@@ -90,9 +90,39 @@ router.route('/refresh-token')
   .post(validate(rules.refresh), controller.refresh);
 
 
+router.route('/reset-password')
 /**
- * TODO: POST /v1/auth/reset-password
+ * @api {post} v1/auth/reset-password Reset password
+ * @apiDescription Send reset password email
+ * @apiVersion 1.0.0
+ * @apiName ResetPassword
+ * @apiGroup Auth
+ * @apiPermission public
+ *
+ * @apiParam  {String}  email         User's email
+ *
+ * @apiSuccess (Success 200) {String}  message    Success message
+ *
+ * @apiError (Bad Request 400)  ValidationError   Can't find user with this email
  */
+  .post(validate(rules.email), controller.reset)
+/**
+ * @api {put} v1/auth/reset-password Reset password
+ * @apiDescription Set new password after reset
+ * @apiVersion 1.0.0
+ * @apiName ResetPassword
+ * @apiGroup Auth
+ * @apiPermission public
+ *
+ * @apiParam  {String}  id          User's id
+ * @apiParam  {String}  reset_token Reset token
+ * @apiParam  {String}  password    New user password
+ *
+ * @apiSuccess (Success 200) {String}  message    Success message
+ *
+ * @apiError (Bad Request 400)  ValidationError   Can't find user with this email
+ */
+  .put(validate(rules.changePassword), controller.changePassword);
 
 
 /**

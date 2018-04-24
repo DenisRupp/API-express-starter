@@ -12,7 +12,7 @@ const formValidation = (err, req, res, next) => {
       errors[error.path] = error.message;
     }
 
-    return res.status(400).json({name: err.name, errors });
+    return res.status(400).json({ name: err.name, errors });
   }
   return next(err);
 };
@@ -38,13 +38,18 @@ const wrongUrlParam = (err, req, res, next) => {
  * Unexpected errors handler
  */
 const other = (err, req, res, next) => {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'dev' ? err : {};
+  const response = {
+    status: (err.status) ? err.status : httpStatus.INTERNAL_SERVER_ERROR,
+    message: err.message,
+    errors: err.errors,
+    stack: err.stack,
+  };
 
-  res.status(err.status || 500);
-  console.error(err);
-  res.json(err);
+  if (process.env.NODE_ENV !== 'development') {
+    delete response.stack;
+  }
+  res.status(response.status);
+  res.json(response);
 };
 
 module.exports = [formValidation, invalidToken, wrongUrlParam, other];

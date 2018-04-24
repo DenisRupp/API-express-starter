@@ -1,6 +1,7 @@
 const httpStatus = require('http-status');
 const { User } = require('../models');
 const { local: getLocalUser } = require('../services/strategies');
+const { ApiError } = require('../utils/customErrors');
 const { generateRefreshToken, generateAuthToken } = require('../services/tokenGenerator');
 
 /**
@@ -21,8 +22,8 @@ const authResponse = async (req, res, next) => {
       },
       user: user.transform(),
     });
-  } catch (error) {
-    next(error);
+  } catch (e) {
+    next(e);
   }
 };
 
@@ -35,8 +36,8 @@ exports.register = [
     try {
       req.user = await new User(req.body).save();
       return next();
-    } catch (error) {
-      return next(error);
+    } catch (e) {
+      return next(e);
     }
   },
   authResponse,
@@ -66,8 +67,40 @@ exports.refresh = [
       if (!user) return next({ status: httpStatus.UNAUTHORIZED, message: 'Refresh token is invalid' });
       req.user = user;
       return next();
-    } catch (error) {
-      return next(error);
+    } catch (e) {
+      return next(e);
     }
   }, authResponse,
 ];
+
+/**
+ * Send reset password email
+ * @public
+ */
+exports.reset = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ where: { email } });
+    if (!user) throw new ApiError({ message: 'Can\'t find user with this email' });
+    await user.resetPassword();
+    res.json({ message: 'Email successfully send' });
+  } catch (e) {
+    next(e);
+  }
+};
+
+/**
+ * Change password after reset
+ * @public
+ */
+exports.changePassword = [async (req, res, next) => {
+  try {
+    const { reset_token, id, password } = req.body;
+    const user = await User.findOne({ where: { reset_token, id } });
+    if (!user) throw new ApiError({ message: 'Reset password token is invalid' });
+    req.user = await user.update({ password, reset_token: null });
+    next();
+  } catch (e) {
+    next(e);
+  }
+}, authResponse];

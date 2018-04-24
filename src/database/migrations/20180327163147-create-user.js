@@ -28,9 +28,10 @@ module.exports = {
       allowNull: true,
       type: Sequelize.JSONB,
     },
-    facebook_id: {
-      type: Sequelize.STRING,
+    reset_token: {
       unique: true,
+      allowNull: true,
+      type: Sequelize.STRING,
     },
     role: {
       type: Sequelize.ENUM('user', 'admin'),
@@ -38,6 +39,9 @@ module.exports = {
     },
     is_active: {
       type: Sequelize.BOOLEAN,
+    },
+    services: {
+      type: Sequelize.JSONB,
     },
     created_at: {
       allowNull: false,
