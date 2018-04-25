@@ -9,6 +9,7 @@ const { User } = require('../../models');
 const strategies = require('../../services/strategies');
 const getAuthorizedUser = require('../helpers/user.auth');
 const nodemailer = require('nodemailer');
+const axios = require('axios');
 const uuidv4 = require('uuid/v4');
 
 const sandbox = sinon.createSandbox();
@@ -17,13 +18,12 @@ describe('Authentication', () => {
   const fakeOAuthRequest = (service, id, savedEmail = false) => {
     const { email: newEmail, first_name, last_name } = UserFactory();
     const email = (!savedEmail) ? newEmail : savedEmail;
-    return Promise.resolve({
-      id,
-      email,
-      service,
-      last_name,
-      first_name,
-    });
+    const data = (service === 'facebook') ? {
+      id, email, last_name, first_name,
+    } : {
+      sub: id, email, given_name: first_name, family_name: last_name,
+    };
+    return Promise.resolve({ data });
   };
 
   beforeEach(async () => {
@@ -106,7 +106,7 @@ describe('Authentication', () => {
     afterEach(() => sandbox.restore());
 
     it('should create a new user and return an accessToken when user does not exist', async () => {
-      sandbox.stub(strategies, 'google').callsFake(() => {
+      sandbox.stub(axios, 'get').callsFake(() => {
         return fakeOAuthRequest('google', id);
       });
       const res = await request(app)
@@ -124,7 +124,7 @@ describe('Authentication', () => {
       user.services = { google: id };
       await user.save();
 
-      sandbox.stub(strategies, 'google').callsFake(() => {
+      sandbox.stub(axios, 'get').callsFake(() => {
         return fakeOAuthRequest('google', id, user.email);
       });
 
@@ -144,6 +144,14 @@ describe('Authentication', () => {
         .expect(httpStatus.BAD_REQUEST);
 
       expect(res.body.errors.access_token).to.eq('Access token is required');
+    });
+
+    it('should return error when access_token is not valid', async () => {
+      sandbox.stub(axios, 'get').rejects({ name: 'AuthStrategiesError', status: httpStatus.UNAUTHORIZED });
+      await request(app)
+        .post('/v1/auth/google')
+        .send({ access_token: 'some_token' })
+        .expect(httpStatus.UNAUTHORIZED);
     });
   });
 
@@ -231,7 +239,7 @@ describe('Authentication', () => {
     afterEach(() => sandbox.restore());
 
     it('should create a new user and return an accessToken when user does not exist', async () => {
-      sandbox.stub(strategies, 'facebook').callsFake(() => {
+      sandbox.stub(axios, 'get').callsFake(() => {
         return fakeOAuthRequest('facebook', id);
       });
       const res = await request(app)
@@ -249,7 +257,7 @@ describe('Authentication', () => {
       user.services = { facebook: id };
       await user.save();
 
-      sandbox.stub(strategies, 'facebook').callsFake(() => {
+      sandbox.stub(axios, 'get').callsFake(() => {
         return fakeOAuthRequest('facebook', id, user.email);
       });
       const res = await request(app)
@@ -271,7 +279,7 @@ describe('Authentication', () => {
     });
 
     it('should return error when access_token is not valid', async () => {
-      sandbox.stub(strategies, 'facebook').rejects({ name: 'AuthStrategiesError', status: httpStatus.UNAUTHORIZED });
+      sandbox.stub(axios, 'get').rejects({ name: 'AuthStrategiesError', status: httpStatus.UNAUTHORIZED });
       await request(app)
         .post('/v1/auth/facebook')
         .send({ access_token: 'some_token' })
