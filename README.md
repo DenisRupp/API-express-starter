@@ -2,7 +2,7 @@
 [![Build Status](https://travis-ci.org/DenisRupp/express-ES2017.svg?branch=master)](https://travis-ci.org/DenisRupp/express-ES2017)
 [![Coverage Status](https://coveralls.io/repos/github/DenisRupp/express-ES2017/badge.svg?branch=master)](https://coveralls.io/github/DenisRupp/express-ES2017?branch=master)
 
-Boilerplate/Generator/Starter Project for building RESTful APIs and microservices using Node.js, Express and MongoDB
+Boilerplate/Generator/Starter Project for building RESTful APIs and microservices using Node.js, Express and Sequelize
 
 ## Features
 
@@ -10,12 +10,11 @@ Boilerplate/Generator/Starter Project for building RESTful APIs and microservice
  - ES2017 latest features like Async/Await
  - CORS enabled
  - Uses [yarn](https://yarnpkg.com)
- - Express + MongoDB ([Mongoose](http://mongoosejs.com/))
+ - Express + Postgres ([Sequelize](http://docs.sequelizejs.com/))
  - Request validation ([express validator](https://github.com/ctavan/express-validator)
  - Consistent coding styles with [editorconfig](http://editorconfig.org)
  - Uses [helmet](https://github.com/helmetjs/helmet) to set some HTTP headers for security
  - Load environment variables from .env files with [dotenv](https://github.com/rolodato/dotenv-safe)
- - Request validation with [joi](https://github.com/hapijs/joi)
  - Gzip compression with [compression](https://github.com/expressjs/compression)
  - Linting with [eslint](http://eslint.org)
  - Tests with [mocha](https://mochajs.org), [chai](http://chaijs.com) and [sinon](http://sinonjs.org)
@@ -29,7 +28,7 @@ Boilerplate/Generator/Starter Project for building RESTful APIs and microservice
 
 ## Requirements
 
- - [Node v8.10+](https://nodejs.org/en/download/current/)
+ - [Node v8.10](https://nodejs.org/en/download/current/)
  - [Yarn](https://yarnpkg.com/en/docs/install)
  - [PM2](http://pm2.keymetrics.io/)
 
@@ -38,8 +37,8 @@ Boilerplate/Generator/Starter Project for building RESTful APIs and microservice
 Clone the repo and make it yours:
 
 ```bash
-git clone --depth 1 https://github.com/DenisRupp/express-ES2017
-cd express-ES2017
+git clone --depth 1 https://github.com/DenisRupp/express-starter
+cd express-starter
 rm -rf .git
 ```
 
