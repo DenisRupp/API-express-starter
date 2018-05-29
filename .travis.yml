@@ -2,6 +2,8 @@ language: node_js
 node_js: '8'
 addons:
   postgresql: "9.6"
+  apt:
+    update: true
 
 git:
   depth: 3
@@ -26,13 +28,17 @@ env:
     - EMAIL_HOST=smtp.gmail.com
     - EMAIL_SENDER=some.email@gmail.com
     - EMAIL_PASSWORD=some_pass
+    - DB_USER=postgres
+    - DB_PASSWORD=
+    - DB_DATABASE=starter
+    - DB_HOST= localhost
 
 script: yarn validate
 
 before_install: yarn global add greenkeeper-lockfile@1
 before_script:
   - greenkeeper-lockfile-update
-  - psql -c 'create database boilerplate_test;' -U postgres
+  - psql -c 'create database starter_test;' -U postgres
   - cp src/database/config.example.js src/database/config.js
 
 
