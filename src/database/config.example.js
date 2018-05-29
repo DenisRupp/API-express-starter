@@ -2,10 +2,10 @@ const operatorsAliases = require('./operatorsAliases');
 
 module.exports = {
   development: {
-    username: 'postgres',
-    password: 'password',
-    database: 'boilerplate',
-    host: '127.0.0.1',
+    username: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_DATABASE,
+    host: process.env.DB_HOST,
     dialect: 'postgres',
     operatorsAliases,
     define: {
@@ -13,10 +13,10 @@ module.exports = {
     },
   },
   test: {
-    username: 'postgres',
-    password: '',
-    database: 'boilerplate_test',
-    host: '127.0.0.1',
+    username: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: `${process.env.DB_DATABASE}_test`,
+    host: process.env.DB_HOST,
     dialect: 'postgres',
     logging: false,
     operatorsAliases,
@@ -25,10 +25,10 @@ module.exports = {
     },
   },
   production: {
-    username: 'postgres',
-    password: 'password',
-    database: 'boilerplate_production',
-    host: '127.0.0.1',
+    username: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: `${process.env.DB_DATABASE}_prod`,
+    host: process.env.DB_HOST,
     dialect: 'postgres',
     logging: false,
     operatorsAliases,
