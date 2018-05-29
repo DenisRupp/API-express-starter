@@ -3,10 +3,9 @@ const { generateAuthToken, generateRefreshToken } = require('../../../api/servic
 
 
 module.exports = async (role = 'user') => {
-  const user = UserFactory({ role });
+  let user = await UserFactory({ role }).save();
   user.refresh_token = generateRefreshToken(user);
-
-  await user.save();
+  user = await user.save();
 
   return {
     user,
