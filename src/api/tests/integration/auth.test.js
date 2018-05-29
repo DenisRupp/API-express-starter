@@ -48,8 +48,8 @@ describe('Authentication', () => {
         .send(req);
       delete req.password;
       expect(res.status).to.eq(httpStatus.OK);
-      expect(res.body.tokens).to.have.a.property('refresh');
-      expect(res.body.tokens).to.have.a.property('auth');
+      expect(res.body.tokens).to.have.a.property('refreshToken');
+      expect(res.body.tokens).to.have.a.property('accessToken');
       expect(res.body.user).to.include(req);
     });
 
@@ -85,8 +85,8 @@ describe('Authentication', () => {
         .post('/v1/auth/login')
         .send({ email, password });
       expect(res.status).to.eq(httpStatus.OK);
-      expect(res.body.tokens).to.have.a.property('refresh');
-      expect(res.body.tokens).to.have.a.property('auth');
+      expect(res.body.tokens).to.have.a.property('refreshToken');
+      expect(res.body.tokens).to.have.a.property('accessToken');
       expect(res.body.user.email).to.equal(user.email);
     });
 
@@ -114,8 +114,8 @@ describe('Authentication', () => {
         .send({ access_token: 'some_token' })
         .expect(httpStatus.OK);
 
-      expect(res.body.tokens).to.have.a.property('auth');
-      expect(res.body.tokens).to.have.a.property('refresh');
+      expect(res.body.tokens).to.have.a.property('accessToken');
+      expect(res.body.tokens).to.have.a.property('refreshToken');
       expect(res.body.user.services.google).to.equal(id);
     });
 
@@ -133,8 +133,8 @@ describe('Authentication', () => {
         .send({ access_token: 'some_token' })
         .expect(httpStatus.OK);
 
-      expect(res.body.tokens).to.have.a.property('auth');
-      expect(res.body.tokens).to.have.a.property('refresh');
+      expect(res.body.tokens).to.have.a.property('accessToken');
+      expect(res.body.tokens).to.have.a.property('refreshToken');
       expect(res.body.user.email).to.be.eq(user.email);
     });
 
@@ -163,8 +163,8 @@ describe('Authentication', () => {
         .send({ refreshToken: userAuth.user.refreshToken.token })
         .expect(httpStatus.OK);
 
-      expect(res.body.tokens).to.have.a.property('auth');
-      expect(res.body.tokens).to.have.a.property('refresh');
+      expect(res.body.tokens).to.have.a.property('accessToken');
+      expect(res.body.tokens).to.have.a.property('refreshToken');
       expect(res.body.user.email).to.be.eq(userAuth.user.email);
     });
 
@@ -217,8 +217,8 @@ describe('Authentication', () => {
         .send({ resetToken, id, password: 'some_new_pass' })
         .expect(httpStatus.OK);
 
-      expect(res.body.tokens).to.have.a.property('auth');
-      expect(res.body.tokens).to.have.a.property('refresh');
+      expect(res.body.tokens).to.have.a.property('accessToken');
+      expect(res.body.tokens).to.have.a.property('refreshToken');
       expect(res.body.user.id).to.equal(id);
     });
 
@@ -247,8 +247,8 @@ describe('Authentication', () => {
         .send({ access_token: 'some_token' })
         .expect(httpStatus.OK);
 
-      expect(res.body.tokens).to.have.a.property('auth');
-      expect(res.body.tokens).to.have.a.property('refresh');
+      expect(res.body.tokens).to.have.a.property('accessToken');
+      expect(res.body.tokens).to.have.a.property('refreshToken');
       expect(res.body.user.services.facebook).to.equal(id);
     });
 
@@ -265,8 +265,8 @@ describe('Authentication', () => {
         .send({ access_token: 'some_token' })
         .expect(httpStatus.OK);
 
-      expect(res.body.tokens).to.have.a.property('auth');
-      expect(res.body.tokens).to.have.a.property('refresh');
+      expect(res.body.tokens).to.have.a.property('accessToken');
+      expect(res.body.tokens).to.have.a.property('refreshToken');
       expect(res.body.user.email).to.be.eq(user.email);
     });
 

@@ -10,15 +10,15 @@ const { generateRefreshToken, generateAccessToken } = require('../services/token
  */
 const authResponse = async (req, res, next) => {
   try {
-    const auth = generateAccessToken(req.user);
+    const accessToken = generateAccessToken(req.user);
 
     req.user.refreshToken = generateRefreshToken(req.user);
     const user = await req.user.save();
 
     res.json({
       tokens: {
-        refresh: user.refreshToken.token,
-        auth,
+        refreshToken: user.refreshToken.token,
+        accessToken,
       },
       user: user.transform(),
     });
