@@ -20,7 +20,7 @@ router.route('/')
    * @apiGroup User
    * @apiPermission admin
    *
-   * @apiHeader {String} Athorization  User's access token
+   * @apiHeader {String} Authorization  User's access token
    *
    * @apiParam  {Number{1-}}         [page=1]     List page
    * @apiParam  {Number{1-100}}      [qty=1]  Users per page
@@ -39,16 +39,16 @@ router.route('/')
    * @apiGroup User
    * @apiPermission admin
    *
-   * @apiHeader {String} Athorization  User's access token
+   * @apiHeader {String} Authorization  User's access token
    *
    * @apiParam  {String}             email        User's email
    * @apiParam  {String{6..128}}     password     User's password
-   * @apiParam  {String{..128}}      first_name   User's first name
-   * @apiParam  {String{..128}}      last_name    User's last name
+   * @apiParam  {String{..128}}      firstName   User's first name
+   * @apiParam  {String{..128}}      lastName    User's last name
    *
    * @apiSuccess (Created 201) {String}  id         User's id
-   * @apiSuccess (Created 201) {String}  first_name User's first name
-   * @apiSuccess (Created 201) {String}  last_name  User's last name
+   * @apiSuccess (Created 201) {String}  firstName User's first name
+   * @apiSuccess (Created 201) {String}  lastName  User's last name
    * @apiSuccess (Created 201) {String}  email      User's email
    * @apiSuccess (Created 201) {String}  role       User's role
    * @apiSuccess (Created 201) {Date}    createdAt  Timestamp
@@ -69,11 +69,11 @@ router.route('/profile')
    * @apiGroup User
    * @apiPermission user
    *
-   * @apiHeader {String} Athorization  User's access token
+   * @apiHeader {String} Authorization User's access token
    *
    * @apiSuccess {String}  id         User's id
-   * @apiSuccess {String}  first_name User's first name
-   * @apiSuccess {String}  last_name  User's last name
+   * @apiSuccess {String}  firstName  User's first name
+   * @apiSuccess {String}  lastName   User's last name
    * @apiSuccess {String}  email      User's email
    * @apiSuccess {String}  role       User's role
    * @apiSuccess {Date}    createdAt  Timestamp
@@ -92,11 +92,11 @@ router.route('/:userId')
    * @apiGroup User
    * @apiPermission user
    *
-   * @apiHeader {String} Athorization  User's access token
+   * @apiHeader {String} Authorization User's access token
    *
    * @apiSuccess {String}  id         User's id
-   * @apiSuccess {String}  first_name User's first name
-   * @apiSuccess {String}  last_name  User's last name
+   * @apiSuccess {String}  firstName  User's first name
+   * @apiSuccess {String}  lastName   User's last name
    * @apiSuccess {String}  email      User's email
    * @apiSuccess {String}  role       User's role
    * @apiSuccess {Date}    createdAt  Timestamp
@@ -114,18 +114,18 @@ router.route('/:userId')
    * @apiGroup User
    * @apiPermission user
    *
-   * @apiHeader {String} Athorization  User's access token
+   * @apiHeader {String} Authorization User's access token
    *
    * @apiParam  {String}             email        User's email
    * @apiParam  {String{6..128}}     password     User's password
-   * @apiParam  {String{..128}}      first_name   User's first name
-   * @apiParam  {String{..128}}      last_name    User's last name
+   * @apiParam  {String{..128}}      firstName   User's first name
+   * @apiParam  {String{..128}}      lastName    User's last name
    * @apiParam  {String=user,admin}  [role]       User's role
    * (You must be an admin to change the user's role)
    *
    * @apiSuccess {String}  id         User's id
-   * @apiSuccess {String}  first_name User's first name
-   * @apiSuccess {String}  last_name  User's last name
+   * @apiSuccess {String}  firstName User's first name
+   * @apiSuccess {String}  lastName  User's last name
    * @apiSuccess {String}  email      User's email
    * @apiSuccess {String}  role       User's role
    * @apiSuccess {Date}    createdAt  Timestamp
@@ -144,7 +144,7 @@ router.route('/:userId')
    * @apiGroup User
    * @apiPermission user
    *
-   * @apiHeader {String} Athorization  User's access token
+   * @apiHeader {String} Authorization User's access token
    *
    * @apiSuccess (No Content 204)  Successfully deleted
    *

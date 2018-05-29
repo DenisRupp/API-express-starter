@@ -16,12 +16,12 @@ const sandbox = sinon.createSandbox();
 
 describe('Authentication', () => {
   const fakeOAuthRequest = (service, id, savedEmail = false) => {
-    const { email: newEmail, first_name, last_name } = UserFactory();
+    const { email: newEmail, firstName, lastName } = UserFactory();
     const email = (!savedEmail) ? newEmail : savedEmail;
     const data = (service === 'facebook') ? {
-      id, email, last_name, first_name,
+      id, email, first_name: firstName, last_name: lastName,
     } : {
-      sub: id, email, given_name: first_name, family_name: last_name,
+      sub: id, email, given_name: firstName, family_name: lastName,
     };
     return Promise.resolve({ data });
   };
@@ -38,10 +38,10 @@ describe('Authentication', () => {
   describe('Registration via email', () => {
     it('should register a new user when request is ok', async () => {
       const {
-        email, password, first_name, last_name,
+        email, password, firstName, lastName,
       } = UserFactory();
       const req = {
-        email, password, first_name, last_name,
+        email, password, firstName, lastName,
       };
       const res = await request(app)
         .post('/v1/auth/register')
@@ -70,8 +70,8 @@ describe('Authentication', () => {
         .send(req);
       expect(res.status).to.eq(httpStatus.BAD_REQUEST);
       expect(res.body.errors).to.have.a.property('email');
-      expect(res.body.errors).to.have.a.property('first_name');
-      expect(res.body.errors).to.have.a.property('last_name');
+      expect(res.body.errors).to.have.a.property('firstName');
+      expect(res.body.errors).to.have.a.property('lastName');
       expect(res.body.errors).to.have.a.property('password');
     });
   });
@@ -138,7 +138,7 @@ describe('Authentication', () => {
       expect(res.body.user.email).to.be.eq(user.email);
     });
 
-    it('should return error when access_token is not provided', async () => {
+    it('should return error when accessToken is not provided', async () => {
       const res = await request(app)
         .post('/v1/auth/google')
         .expect(httpStatus.BAD_REQUEST);
@@ -146,7 +146,7 @@ describe('Authentication', () => {
       expect(res.body.errors.access_token).to.eq('Access token is required');
     });
 
-    it('should return error when access_token is not valid', async () => {
+    it('should return error when accessToken is not valid', async () => {
       sandbox.stub(axios, 'get').rejects({ name: 'AuthStrategiesError', status: httpStatus.UNAUTHORIZED });
       await request(app)
         .post('/v1/auth/google')
@@ -160,7 +160,7 @@ describe('Authentication', () => {
       const userAuth = await getAuthorizedUser();
       const res = await request(app)
         .post('/v1/auth/refresh-token')
-        .send({ refresh_token: userAuth.user.refresh_token.token })
+        .send({ refreshToken: userAuth.user.refreshToken.token })
         .expect(httpStatus.OK);
 
       expect(res.body.tokens).to.have.a.property('auth');
@@ -171,7 +171,7 @@ describe('Authentication', () => {
     it('should return errors for invalid refresh token', async () => {
       await request(app)
         .post('/v1/auth/refresh-token')
-        .send({ refresh_token: 'wrong token' })
+        .send({ refreshToken: 'wrong token' })
         .expect(httpStatus.UNAUTHORIZED);
     });
   });
@@ -209,12 +209,12 @@ describe('Authentication', () => {
 
     it('should set new password and delete  after reset', async () => {
       const newUser = await UserFactory();
-      newUser.reset_token = uuidv4();
+      newUser.resetToken = uuidv4();
       const user = await newUser.save();
-      const { reset_token, id } = user;
+      const { resetToken, id } = user;
       const res = await request(app)
         .put('/v1/auth/reset-password')
-        .send({ reset_token, id, password: 'some_new_pass' })
+        .send({ resetToken, id, password: 'some_new_pass' })
         .expect(httpStatus.OK);
 
       expect(res.body.tokens).to.have.a.property('auth');
@@ -224,12 +224,12 @@ describe('Authentication', () => {
 
     it('should show error with invalid token', async () => {
       const newUser = await UserFactory();
-      newUser.reset_token = uuidv4();
+      newUser.resetToken = uuidv4();
       const user = await newUser.save();
       const { id } = user;
       await request(app)
         .put('/v1/auth/reset-password')
-        .send({ reset_token: 'some_token', id, password: 'some_new_pass' })
+        .send({ resetToken: 'some_token', id, password: 'some_new_pass' })
         .expect(httpStatus.BAD_REQUEST);
     });
   });
@@ -270,7 +270,7 @@ describe('Authentication', () => {
       expect(res.body.user.email).to.be.eq(user.email);
     });
 
-    it('should return error when access_token is not provided', async () => {
+    it('should return error when accessToken is not provided', async () => {
       const res = await request(app)
         .post('/v1/auth/facebook')
         .expect(httpStatus.BAD_REQUEST);
@@ -278,7 +278,7 @@ describe('Authentication', () => {
       expect(res.body.errors.access_token).to.eq('Access token is required');
     });
 
-    it('should return error when access_token is not valid', async () => {
+    it('should return error when accessToken is not valid', async () => {
       sandbox.stub(axios, 'get').rejects({ name: 'AuthStrategiesError', status: httpStatus.UNAUTHORIZED });
       await request(app)
         .post('/v1/auth/facebook')

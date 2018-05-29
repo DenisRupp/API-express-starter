@@ -11,7 +11,7 @@ router.use(
       const user = await User.findById(req.user.id);
 
       if (!user) throw invalidToken;
-      if (!user.is_active) throw userBlocked;
+      if (!user.isActive) throw userBlocked;
 
       req.user = user;
       next();

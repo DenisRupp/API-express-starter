@@ -7,14 +7,14 @@ const mailer = require('../services/mailer');
 
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define('User', {
-    first_name: {
+    firstName: {
       type: DataTypes.STRING,
       defaultValue: '',
       validate: {
         notEmpty: { msg: 'First Name is required' },
       },
     },
-    last_name: {
+    lastName: {
       type: DataTypes.STRING,
       defaultValue: '',
       validate: {
@@ -49,12 +49,12 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.ENUM('user', 'admin'),
       defaultValue: 'user',
     },
-    refresh_token: DataTypes.JSONB,
-    reset_token: {
+    refreshToken: DataTypes.JSONB,
+    resetToken: {
       type: DataTypes.STRING,
       unique: true,
     },
-    is_active: {
+    isActive: {
       defaultValue: true,
       type: DataTypes.BOOLEAN,
     },
@@ -83,8 +83,8 @@ module.exports = (sequelize, DataTypes) => {
    * @returns {Promise<*>}
    */
   User.getByRefreshToken = async function (token) {
-    const user = await this.findOne({ where: { 'refresh_token.token': token } });
-    return (user && moment().isBefore(moment(user.refresh_token.expires))) ? user : false;
+    const user = await this.findOne({ where: { 'refreshToken.token': token } });
+    return (user && moment().isBefore(moment(user.refreshToken.expires))) ? user : false;
   };
 
   /**
@@ -101,18 +101,18 @@ module.exports = (sequelize, DataTypes) => {
   };
 
   User.oAuthLogin = async function ({
-    service, id, email, first_name, last_name,
+    service, id, email, firstName, lastName,
   }) {
     const user = await this.findOne({ where: [{ [`services.${service}`]: id }, { email }] });
     if (user) {
       user.services[service] = id;
-      if (!user.first_name) user.first_name = first_name;
-      if (!user.last_name) user.last_name = last_name;
+      if (!user.firstName) user.firstName = firstName;
+      if (!user.lastName) user.lastName = lastName;
       return user.save();
     }
     const password = uuidv4();
     return this.create({
-      services: { [service]: id }, email, password, first_name, last_name,
+      services: { [service]: id }, email, password, firstName, lastName,
     });
   };
 
@@ -125,7 +125,7 @@ module.exports = (sequelize, DataTypes) => {
     transform() {
       return omit(
         this.get({ plain: true }),
-        ['password', 'refresh_token', 'reset_token'],
+        ['password', 'refreshToken', 'resetToken'],
       );
     },
 
@@ -143,7 +143,7 @@ module.exports = (sequelize, DataTypes) => {
      * @returns {Promise}
      */
     async resetPassword() {
-      this.reset_token = uuidv4();
+      this.resetToken = uuidv4();
       const user = await this.save();
       return mailer(user.email, 'Reset password email', 'reset-password', { user });
     },

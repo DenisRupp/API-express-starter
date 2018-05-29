@@ -3,16 +3,16 @@ const { body } = require('express-validator/check');
 module.exports = {
   // POST /v1/auth/login
   login: [
-    body('email', 'Email is invalid').isEmail().normalizeEmail(),
+    body('email', 'Email is invalid').exists().isEmail(),
     body('password', 'Password is required').exists(),
   ],
   // POST /v1/auth/reset-password
   email: [
-    body('email', 'Email is invalid').isEmail().normalizeEmail(),
+    body('email', 'Email is invalid').exists().isEmail(),
   ],
   changePassword: [
     body('id', 'User id is required').exists(),
-    body('reset_token', 'Reset is required').exists(),
+    body('resetToken', 'Reset is required').exists(),
     body('password', 'Password is required').exists(),
   ],
   // POST /v1/auth/facebook
@@ -23,6 +23,6 @@ module.exports = {
 
   // POST /v1/auth/refresh
   refresh: [
-    body('refresh_token', 'Refresh token is required').exists(),
+    body('refreshToken', 'Refresh token is required').exists(),
   ],
 };

@@ -8,7 +8,7 @@ module.exports = {
     const expires = moment().add(process.env.REFRESH_TOKEN_LIFE, 'days').toDate();
     return { token, expires };
   },
-  generateAuthToken: user => jwt.sign(
+  generateAccessToken: user => jwt.sign(
     { id: user.id },
     process.env.SECRET_STRING,
     { expiresIn: process.env.AUTH_TOKEN_LIFE },

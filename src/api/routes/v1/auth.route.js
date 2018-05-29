@@ -16,8 +16,8 @@ const router = express.Router();
  *
  * @apiParam  {String}                 email      User's email
  * @apiParam  {String{6..22}}          password   User's password
- * @apiParam  {String}                 first_name User's first name
- * @apiParam  {String}                 last_name  User's last name
+ * @apiParam  {String}                 firstName User's first name
+ * @apiParam  {String}                 lastName  User's last name
  *
  * @apiSuccess (Success 200) {String}  token.auth     Access Token's type
  * @apiSuccess (Success 200) {String}  token.refresh  Token to get a new accessToken
@@ -115,7 +115,7 @@ router.route('/reset-password')
  * @apiPermission public
  *
  * @apiParam  {String}  id          User's id
- * @apiParam  {String}  reset_token Reset token
+ * @apiParam  {String}  resetToken Reset token
  * @apiParam  {String}  password    New user password
  *
  * @apiSuccess (Success 200) {String}  message    Success message
