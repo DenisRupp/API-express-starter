@@ -5,6 +5,10 @@ addons:
   apt:
     update: true
 
+cache:
+  directories:
+    - node_modules
+
 git:
   depth: 3
 
@@ -29,7 +33,6 @@ env:
     - EMAIL_SENDER=some.email@gmail.com
     - EMAIL_PASSWORD=some_pass
     - DB_USER=postgres
-    - DB_PASSWORD=''
     - DB_DATABASE=starter
     - DB_HOST= localhost
 
