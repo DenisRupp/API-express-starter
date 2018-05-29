@@ -8,7 +8,8 @@ const getAuthorizedUser = require('../helpers/user.auth');
 describe('Users route', () => {
   let adminToken;
 
-  before(async () => {
+  before(async function before() {
+    this.timeout(5000);
     const promises = [];
     for (let i = 0; i < 10; i++) {
       promises.push(UserFactory().save());

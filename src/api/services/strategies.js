@@ -18,13 +18,13 @@ exports.facebook = async (access_token) => {
     const params = { access_token, fields };
     const response = await axios.get(url, { params });
     const {
-      id, email, first_name, last_name,
+      id, email, first_name: firstName, last_name: lastName,
     } = response.data;
     return {
       service: 'facebook',
       id,
-      first_name,
-      last_name,
+      firstName,
+      lastName,
       email,
     };
   } catch (e) {
@@ -38,13 +38,13 @@ exports.google = async (access_token) => {
     const params = { access_token };
     const response = await axios.get(url, { params });
     const {
-      sub, email, given_name: first_name, family_name: last_name,
+      sub, email, given_name: firstName, family_name: lastName,
     } = response.data;
     return {
       service: 'google',
       id: sub,
-      first_name,
-      last_name,
+      firstName,
+      lastName,
       email,
     };
   } catch (e) {

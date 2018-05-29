@@ -2,7 +2,7 @@ const httpStatus = require('http-status');
 const { User } = require('../models');
 const { local: getLocalUser } = require('../services/strategies');
 const { ApiError } = require('../utils/customErrors');
-const { generateRefreshToken, generateAuthToken } = require('../services/tokenGenerator');
+const { generateRefreshToken, generateAccessToken } = require('../services/tokenGenerator');
 
 /**
  * Generate response with refresh and auth tokens
@@ -10,15 +10,15 @@ const { generateRefreshToken, generateAuthToken } = require('../services/tokenGe
  */
 const authResponse = async (req, res, next) => {
   try {
-    const auth = generateAuthToken(req.user);
+    const accessToken = generateAccessToken(req.user);
 
-    req.user.refresh_token = generateRefreshToken(req.user);
+    req.user.refreshToken = generateRefreshToken(req.user);
     const user = await req.user.save();
 
     res.json({
       tokens: {
-        refresh: user.refresh_token.token,
-        auth,
+        refreshToken: user.refreshToken.token,
+        accessToken,
       },
       user: user.transform(),
     });
@@ -34,7 +34,7 @@ const authResponse = async (req, res, next) => {
 exports.register = [
   async (req, res, next) => {
     try {
-      req.user = await new User(req.body).save();
+      req.user = await User.create(req.body);
       return next();
     } catch (e) {
       return next(e);
@@ -63,7 +63,7 @@ exports.oAuth = authResponse;
 exports.refresh = [
   async (req, res, next) => {
     try {
-      const user = await User.getByRefreshToken(req.body.refresh_token);
+      const user = await User.getByRefreshToken(req.body.refreshToken);
       if (!user) return next({ status: httpStatus.UNAUTHORIZED, message: 'Refresh token is invalid' });
       req.user = user;
       return next();
@@ -95,10 +95,10 @@ exports.reset = async (req, res, next) => {
  */
 exports.changePassword = [async (req, res, next) => {
   try {
-    const { reset_token, id, password } = req.body;
-    const user = await User.findOne({ where: { reset_token, id } });
+    const { resetToken, id, password } = req.body;
+    const user = await User.findOne({ where: { resetToken, id } });
     if (!user) throw new ApiError({ message: 'Reset password token is invalid' });
-    req.user = await user.update({ password, reset_token: null });
+    req.user = await user.update({ password, resetToken: null });
     next();
   } catch (e) {
     next(e);
