@@ -29,7 +29,7 @@ env:
     - EMAIL_SENDER=some.email@gmail.com
     - EMAIL_PASSWORD=some_pass
     - DB_USER=postgres
-    - DB_PASSWORD=
+    - DB_PASSWORD=''
     - DB_DATABASE=starter
     - DB_HOST= localhost
 
