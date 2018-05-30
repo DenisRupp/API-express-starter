@@ -76,7 +76,7 @@ describe('Users route', () => {
         .get(`/v1/users/${user.id}`)
         .set('Authorization', `Bearer ${userAuth.authToken}`)
         .send({});
-      expect(res.status).to.eq(httpStatus.UNAUTHORIZED);
+      expect(res.status).to.eq(httpStatus.FORBIDDEN);
     });
   });
 
