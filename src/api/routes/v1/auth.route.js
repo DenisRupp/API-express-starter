@@ -61,6 +61,20 @@ router.post('/register', controller.register);
 router.route('/login')
   .post(validate(rules.login), controller.login);
 
+/**
+ * @api {post} v1/auth/logout Logout
+ * @apiDescription Delete user's refresh token
+ * @apiVersion 1.0.0
+ * @apiName Logout
+ * @apiGroup Auth
+ * @apiPermission public
+ *
+ * @apiParam  {String}   refreshToken     User's refresh token
+ *
+ * @apiSuccess (Success 204)
+ */
+router.route('/logout')
+  .post(controller.logout);
 
 /**
  * @api {post} v1/auth/refresh-token Refresh Token

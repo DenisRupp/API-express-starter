@@ -6,7 +6,6 @@ const sinon = require('sinon');
 const app = require('../../../index');
 const UserFactory = require('../factories/user.factory');
 const { User } = require('../../models');
-const strategies = require('../../services/strategies');
 const getAuthorizedUser = require('../helpers/user.auth');
 const nodemailer = require('nodemailer');
 const axios = require('axios');
@@ -73,6 +72,25 @@ describe('Authentication', () => {
       expect(res.body.errors).to.have.a.property('firstName');
       expect(res.body.errors).to.have.a.property('lastName');
       expect(res.body.errors).to.have.a.property('password');
+    });
+  });
+
+  describe('Logout', async () => {
+    it('should delete refresh password', async () => {
+      const userAuth = await getAuthorizedUser();
+      const res = await request(app)
+        .post('/v1/auth/logout')
+        .send({ refreshToken: userAuth.user.refreshToken.token });
+      expect(res.status).to.eq(httpStatus.NO_CONTENT);
+      const user = await User.findById(userAuth.user.id);
+      expect(user.refreshToken).to.eq(null);
+    });
+
+    it('should no show error if token is invalid', async () => {
+      const res = await request(app)
+        .post('/v1/auth/logout')
+        .send();
+      expect(res.status).to.eq(httpStatus.NO_CONTENT);
     });
   });
 
