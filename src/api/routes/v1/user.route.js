@@ -1,7 +1,7 @@
 const express = require('express');
 const validate = require('../../validations/handler');
 const controller = require('../../controllers/user.controller');
-const access = require('../../middlewares/accessControll');
+const auth = require('../../middlewares/authorize');
 const rules = require('../../validations/user.validation');
 
 const router = express.Router();
@@ -30,7 +30,7 @@ router.route('/')
    * @apiError (Unauthorized 401)  Unauthorized  Only authenticated users can access the data
    * @apiError (Forbidden 403)     Forbidden     Only admins can access the data
    */
-  .get(access('admin'), validate(rules.listUsers), controller.list)
+  .get(auth('admin'), validate(rules.listUsers), controller.list)
   /**
    * @api {post} v1/users Create User
    * @apiDescription Create a new user
@@ -57,7 +57,7 @@ router.route('/')
    * @apiError (Unauthorized 401)  Unauthorized     Only authenticated users can create the data
    * @apiError (Forbidden 403)     Forbidden        Only admins can create the data
    */
-  .post(access('admin'), validate(rules.createUser), controller.create);
+  .post(auth('admin'), validate(rules.createUser), controller.create);
 
 
 router.route('/profile')
@@ -80,7 +80,7 @@ router.route('/profile')
    *
    * @apiError (Unauthorized 401)  Unauthorized  Only authenticated Users can access the data
    */
-  .get(controller.loggedIn);
+  .get(auth('user'), controller.loggedIn);
 
 
 router.route('/:userId')
@@ -105,7 +105,7 @@ router.route('/:userId')
    * @apiError (Forbidden 403)    Forbidden    Only user with same id or admins can access the data
    * @apiError (Not Found 404)    NotFound     User does not exist
    */
-  .get(access('admin'), controller.get)
+  .get(auth('admin'), controller.get)
   /**
    * @api {patch} v1/users/:id Update User
    * @apiDescription Update some fields of a user document
@@ -135,7 +135,7 @@ router.route('/:userId')
    * @apiError (Forbidden 403)    Forbidden    Only user with same id or admins can modify the data
    * @apiError (Not Found 404)    NotFound     User does not exist
    */
-  .patch(validate(rules.updateUser), controller.update)
+  .patch(auth('admin'), validate(rules.updateUser), controller.update)
   /**
    * @api {patch} v1/users/:id Delete User
    * @apiDescription Delete a user
@@ -152,7 +152,7 @@ router.route('/:userId')
    * @apiError (Forbidden 403)    Forbidden     Only user with same id or admins can delete the data
    * @apiError (Not Found 404)    NotFound      User does not exist
    */
-  .delete(access('admin'), controller.remove);
+  .delete(auth('admin'), controller.remove);
 
 
 module.exports = router;
