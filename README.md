@@ -54,10 +54,16 @@ Set environment variables:
 cp .env.example .env
 ```
 
+Set database configuration:
+
+```bash
+cp src/database/config.example.js src/database/config.js
+```
+
 ## Running Locally
 
 ```bash
-yarn dev
+yarn local
 ```
 
 ## Running in Production
@@ -65,6 +71,23 @@ yarn dev
 ```bash
 yarn start
 ```
+## Database commands
+
+```bash
+# run all migrations
+yarn migrate
+
+# run all seeds
+yarn seeds
+
+# generate new migration
+sequelize migration:generate --name new-migration
+
+# generate new seed
+sequelize seed:generate --name new-seeds
+
+```
+More commands [here](https://github.com/sequelize/cli).
 
 ## Lint
 
@@ -110,6 +133,13 @@ yarn validate
 ```bash
 # show logs in production
 pm2 logs
+```
+
+## Deploy
+
+```bash
+# deploy to dev
+pm2 deploy dev
 ```
 
 ## Documentation
