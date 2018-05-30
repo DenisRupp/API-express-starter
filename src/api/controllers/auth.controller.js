@@ -50,6 +50,23 @@ exports.register = [
 exports.login = [getLocalUser, authResponse];
 
 /**
+ * Delete refresh token
+ * @public
+ */
+exports.logout = async (req, res) => {
+  const { refreshToken } = req.body;
+
+  if (refreshToken) {
+    await User.update(
+      { refreshToken: null },
+      { where: { 'refreshToken.token': refreshToken }, limit: 1 },
+    );
+  }
+
+  res.status(httpStatus.NO_CONTENT).send();
+};
+
+/**
  * login with an existing user or creates a new one if valid accessToken token
  * Returns jwt token
  * @public
