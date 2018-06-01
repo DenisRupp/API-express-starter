@@ -32,7 +32,12 @@ describe('Test mailer service', () => {
 
   it('Should send email with right params', async () => {
     const sendMailSpy = sinon.spy(transport, 'sendMail');
-    const mail = await mailer(data.to, data.subject, data.template, data.context);
+    const mail = await mailer(
+      data.to,
+      data.subject,
+      data.template,
+      data.context,
+    );
     sinon.assert.calledWith(sendMailSpy, data);
     expect(mail).to.eq('Success');
   });

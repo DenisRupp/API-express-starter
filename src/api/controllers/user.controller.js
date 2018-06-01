@@ -63,15 +63,18 @@ exports.update = async (req, res, next) => {
  * Get user list
  * @public
  */
-exports.list = [async (req, res, next) => {
-  try {
-    const { page, qty } = req.query;
-    req.pagination = await User.paginate(page, qty);
-    next();
-  } catch (e) {
-    next(e);
-  }
-}, paginate];
+exports.list = [
+  async (req, res, next) => {
+    try {
+      const { page, qty } = req.query;
+      req.pagination = await User.paginate(page, qty);
+      next();
+    } catch (e) {
+      next(e);
+    }
+  },
+  paginate,
+];
 
 /**
  * Delete user

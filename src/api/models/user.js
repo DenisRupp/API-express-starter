@@ -61,7 +61,7 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   /** Models Hooks */
-  User.beforeSave(async (user) => {
+  User.beforeSave(async user => {
     try {
       if (user._changed.email) {
         user.email = user.email.toLowerCase();
@@ -82,9 +82,11 @@ module.exports = (sequelize, DataTypes) => {
    * @param token
    * @returns {Promise<*>}
    */
-  User.getByRefreshToken = async function (token) {
+  User.getByRefreshToken = async function getByRefreshToken(token) {
     const user = await this.findOne({ where: { 'refreshToken.token': token } });
-    return (user && moment().isBefore(moment(user.refreshToken.expires))) ? user : false;
+    return user && moment().isBefore(moment(user.refreshToken.expires))
+      ? user
+      : false;
   };
 
   /**
@@ -93,17 +95,23 @@ module.exports = (sequelize, DataTypes) => {
    * @param limit
    * @returns {Promise<*>}
    */
-  User.paginate = async function (page = 1, limit = 10) {
+  User.paginate = async function paginate(page = 1, limit = 10) {
     const offset = limit * (page - 1);
     const result = await this.findAndCountAll({ limit, offset });
     result.rows.map(user => user.transform());
     return result;
   };
 
-  User.oAuthLogin = async function ({
-    service, id, email, firstName, lastName,
+  User.oAuthLogin = async function oAuthLogin({
+    service,
+    id,
+    email,
+    firstName,
+    lastName,
   }) {
-    const user = await this.findOne({ where: [{ [`services.${service}`]: id }, { email }] });
+    const user = await this.findOne({
+      where: [{ [`services.${service}`]: id }, { email }],
+    });
     if (user) {
       user.services[service] = id;
       if (!user.firstName) user.firstName = firstName;
@@ -112,7 +120,11 @@ module.exports = (sequelize, DataTypes) => {
     }
     const password = uuidv4();
     return this.create({
-      services: { [service]: id }, email, password, firstName, lastName,
+      services: { [service]: id },
+      email,
+      password,
+      firstName,
+      lastName,
     });
   };
 
@@ -123,10 +135,11 @@ module.exports = (sequelize, DataTypes) => {
      * @returns {Object}
      */
     transform() {
-      return omit(
-        this.get({ plain: true }),
-        ['password', 'refreshToken', 'resetToken'],
-      );
+      return omit(this.get({ plain: true }), [
+        'password',
+        'refreshToken',
+        'resetToken',
+      ]);
     },
 
     /**
@@ -145,7 +158,9 @@ module.exports = (sequelize, DataTypes) => {
     async resetPassword() {
       this.resetToken = uuidv4();
       const user = await this.save();
-      return mailer(user.email, 'Reset password email', 'reset-password', { user });
+      return mailer(user.email, 'Reset password email', 'reset-password', {
+        user,
+      });
     },
   };
 

@@ -33,7 +33,6 @@ const router = express.Router();
  */
 router.post('/register', controller.register);
 
-
 /**
  * @api {post} v1/auth/login Login
  * @apiDescription Get an accessToken
@@ -58,8 +57,7 @@ router.post('/register', controller.register);
  * @apiError (Bad Request 400)  ValidationError  Some parameters may contain invalid values
  * @apiError (Unauthorized 401)  Unauthorized     Incorrect email or password
  */
-router.route('/login')
-  .post(validate(rules.login), controller.login);
+router.route('/login').post(validate(rules.login), controller.login);
 
 /**
  * @api {post} v1/auth/logout Logout
@@ -73,8 +71,7 @@ router.route('/login')
  *
  * @apiSuccess (Success 204)
  */
-router.route('/logout')
-  .post(controller.logout);
+router.route('/logout').post(controller.logout);
 
 /**
  * @api {post} v1/auth/refresh-token Refresh Token
@@ -100,44 +97,44 @@ router.route('/logout')
  * @apiError (Bad Request 400)  ValidationError  Some parameters may contain invalid values
  * @apiError (Unauthorized 401)  Unauthorized     Incorrect email or refreshToken
  */
-router.route('/refresh-token')
+router
+  .route('/refresh-token')
   .post(validate(rules.refresh), controller.refresh);
 
-
-router.route('/reset-password')
-/**
- * @api {post} v1/auth/reset-password Reset password
- * @apiDescription Send reset password email
- * @apiVersion 1.0.0
- * @apiName ResetPassword
- * @apiGroup Auth
- * @apiPermission public
- *
- * @apiParam  {String}  email         User's email
- *
- * @apiSuccess (Success 200) {String}  message    Success message
- *
- * @apiError (Bad Request 400)  ValidationError   Can't find user with this email
- */
+router
+  .route('/reset-password')
+  /**
+   * @api {post} v1/auth/reset-password Reset password
+   * @apiDescription Send reset password email
+   * @apiVersion 1.0.0
+   * @apiName ResetPassword
+   * @apiGroup Auth
+   * @apiPermission public
+   *
+   * @apiParam  {String}  email         User's email
+   *
+   * @apiSuccess (Success 200) {String}  message    Success message
+   *
+   * @apiError (Bad Request 400)  ValidationError   Can't find user with this email
+   */
   .post(validate(rules.email), controller.reset)
-/**
- * @api {put} v1/auth/reset-password Reset password
- * @apiDescription Set new password after reset
- * @apiVersion 1.0.0
- * @apiName ResetPassword
- * @apiGroup Auth
- * @apiPermission public
- *
- * @apiParam  {String}  id          User's id
- * @apiParam  {String}  resetToken Reset token
- * @apiParam  {String}  password    New user password
- *
- * @apiSuccess (Success 200) {String}  message    Success message
- *
- * @apiError (Bad Request 400)  ValidationError   Can't find user with this email
- */
+  /**
+   * @api {put} v1/auth/reset-password Reset password
+   * @apiDescription Set new password after reset
+   * @apiVersion 1.0.0
+   * @apiName ResetPassword
+   * @apiGroup Auth
+   * @apiPermission public
+   *
+   * @apiParam  {String}  id          User's id
+   * @apiParam  {String}  resetToken Reset token
+   * @apiParam  {String}  password    New user password
+   *
+   * @apiSuccess (Success 200) {String}  message    Success message
+   *
+   * @apiError (Bad Request 400)  ValidationError   Can't find user with this email
+   */
   .put(validate(rules.changePassword), controller.changePassword);
-
 
 /**
  * @api {post} v1/auth/facebook Facebook Login
@@ -162,9 +159,13 @@ router.route('/reset-password')
  * @apiError (Bad Request 400)  ValidationError  Some parameters may contain invalid values
  * @apiError (Unauthorized 401)  Unauthorized    Incorrect access_token
  */
-router.route('/facebook')
-  .post(validate(rules.oAuth), passport.authenticate('facebook', { session: false }), controller.oAuth);
-
+router
+  .route('/facebook')
+  .post(
+    validate(rules.oAuth),
+    passport.authenticate('facebook', { session: false }),
+    controller.oAuth,
+  );
 
 /**
  * @api {post} v1/auth/google Google Login
@@ -184,7 +185,12 @@ router.route('/facebook')
  * @apiError (Bad Request 400)  ValidationError  Some parameters may contain invalid values
  * @apiError (Unauthorized 401)  Unauthorized    Incorrect access_token
  */
-router.route('/google')
-  .post(validate(rules.oAuth), passport.authenticate('google', { session: false }), controller.oAuth);
+router
+  .route('/google')
+  .post(
+    validate(rules.oAuth),
+    passport.authenticate('google', { session: false }),
+    controller.oAuth,
+  );
 
 module.exports = router;

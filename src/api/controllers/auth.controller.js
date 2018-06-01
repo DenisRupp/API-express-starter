@@ -2,7 +2,10 @@ const httpStatus = require('http-status');
 const { User } = require('../models');
 const { local: getLocalUser } = require('../services/strategies');
 const { ApiError } = require('../utils/customErrors');
-const { generateRefreshToken, generateAccessToken } = require('../services/tokenGenerator');
+const {
+  generateRefreshToken,
+  generateAccessToken,
+} = require('../services/tokenGenerator');
 
 /**
  * Generate response with refresh and auth tokens
@@ -81,13 +84,19 @@ exports.refresh = [
   async (req, res, next) => {
     try {
       const user = await User.getByRefreshToken(req.body.refreshToken);
-      if (!user) return next({ status: httpStatus.UNAUTHORIZED, message: 'Refresh token is invalid' });
+      if (!user) {
+        return next({
+          status: httpStatus.UNAUTHORIZED,
+          message: 'Refresh token is invalid',
+        });
+      }
       req.user = user;
       return next();
     } catch (e) {
       return next(e);
     }
-  }, authResponse,
+  },
+  authResponse,
 ];
 
 /**
@@ -98,7 +107,12 @@ exports.reset = async (req, res, next) => {
   try {
     const { email } = req.body;
     const user = await User.findOne({ where: { email } });
-    if (!user) throw new ApiError({ message: 'Can\'t find user with this email' });
+    if (!user) {
+      throw new ApiError({
+        message: "Can't find user with this email",
+        status: 400,
+      });
+    }
     await user.resetPassword();
     res.json({ message: 'Email successfully send' });
   } catch (e) {
@@ -110,14 +124,22 @@ exports.reset = async (req, res, next) => {
  * Change password after reset
  * @public
  */
-exports.changePassword = [async (req, res, next) => {
-  try {
-    const { resetToken, id, password } = req.body;
-    const user = await User.findOne({ where: { resetToken, id } });
-    if (!user) throw new ApiError({ message: 'Reset password token is invalid' });
-    req.user = await user.update({ password, resetToken: null });
-    next();
-  } catch (e) {
-    next(e);
-  }
-}, authResponse];
+exports.changePassword = [
+  async (req, res, next) => {
+    try {
+      const { resetToken, id, password } = req.body;
+      const user = await User.findOne({ where: { resetToken, id } });
+      if (!user) {
+        throw new ApiError({
+          message: 'Reset password token is invalid',
+          status: 400,
+        });
+      }
+      req.user = await user.update({ password, resetToken: null });
+      next();
+    } catch (e) {
+      next(e);
+    }
+  },
+  authResponse,
+];
