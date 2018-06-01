@@ -36,8 +36,7 @@ exports.loggedIn = (req, res) => res.json(req.user.transform());
 exports.create = async (req, res, next) => {
   try {
     const user = await User.create(req.body);
-    res.status(httpStatus.CREATED);
-    res.json(user.transform());
+    res.status(httpStatus.CREATED).json(user.transform());
   } catch (e) {
     next(e);
   }

@@ -120,7 +120,7 @@ describe('Authentication', () => {
 
     it('should show error with empty email and password', async () => {
       const res = await request(app)
-        .post('/v1/auth/register')
+        .post('/v1/auth/login')
         .send({});
       expect(res.status).to.eq(httpStatus.BAD_REQUEST);
       expect(res.body.errors).to.have.a.property('email');

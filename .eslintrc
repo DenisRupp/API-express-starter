@@ -41,5 +41,5 @@
     "airbnb-base",
     "prettier"
   ],
-  "plugins": ["prettier"],
+  "plugins": ["prettier"]
 }

@@ -14,6 +14,7 @@ router.use(statusMonitor);
  * GET v1/docs
  */
 router.use('/docs', express.static('docs'));
+router.use('/docs-examples', express.static('docs-examples'));
 
 router.use('/users', userRoutes);
 router.use('/auth', authRoutes);
