@@ -49,8 +49,10 @@ module.exports = {
       path: '/var/www/API-express-starter',
       ssh_options: 'ForwardAgent=yes',
       'post-deploy': 'cp ../shared/.env .env && yarn && yarn start',
-      'pre-setup': 'npm install -g yarn && npm install -g pm2 && npm install -g apidoc ',
-      'post-setup': 'yarn && cp src/database/config.example.js src/database/config.js',
+      'pre-setup':
+        'npm install -g yarn && npm install -g pm2 && npm install -g apidoc ',
+      'post-setup':
+        'yarn && cp src/database/config.example.js src/database/config.js',
     },
   },
 };

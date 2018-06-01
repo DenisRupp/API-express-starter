@@ -82,7 +82,7 @@ module.exports = (sequelize, DataTypes) => {
    * @param token
    * @returns {Promise<*>}
    */
-  User.getByRefreshToken = async function(token) {
+  User.getByRefreshToken = async function getByRefreshToken(token) {
     const user = await this.findOne({ where: { 'refreshToken.token': token } });
     return user && moment().isBefore(moment(user.refreshToken.expires))
       ? user
@@ -95,14 +95,14 @@ module.exports = (sequelize, DataTypes) => {
    * @param limit
    * @returns {Promise<*>}
    */
-  User.paginate = async function(page = 1, limit = 10) {
+  User.paginate = async function paginate(page = 1, limit = 10) {
     const offset = limit * (page - 1);
     const result = await this.findAndCountAll({ limit, offset });
     result.rows.map(user => user.transform());
     return result;
   };
 
-  User.oAuthLogin = async function({
+  User.oAuthLogin = async function oAuthLogin({
     service,
     id,
     email,

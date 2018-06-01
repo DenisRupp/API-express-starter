@@ -17,13 +17,13 @@ const sequelize = new Sequelize(
   config.database,
   config.username,
   config.password,
-  config
+  config,
 );
 
 fs.readdirSync(__dirname)
   .filter(
     file =>
-      file.indexOf('.') !== 0 && file !== basename && file.slice(-3) === '.js'
+      file.indexOf('.') !== 0 && file !== basename && file.slice(-3) === '.js',
   )
   .forEach(file => {
     const model = sequelize.import(path.join(__dirname, file));
