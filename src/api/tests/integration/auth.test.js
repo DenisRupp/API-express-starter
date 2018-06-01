@@ -16,12 +16,21 @@ const sandbox = sinon.createSandbox();
 describe('Authentication', () => {
   const fakeOAuthRequest = (service, id, savedEmail = false) => {
     const { email: newEmail, firstName, lastName } = UserFactory();
-    const email = (!savedEmail) ? newEmail : savedEmail;
-    const data = (service === 'facebook') ? {
-      id, email, first_name: firstName, last_name: lastName,
-    } : {
-      sub: id, email, given_name: firstName, family_name: lastName,
-    };
+    const email = !savedEmail ? newEmail : savedEmail;
+    const data =
+      service === 'facebook'
+        ? {
+            id,
+            email,
+            first_name: firstName,
+            last_name: lastName,
+          }
+        : {
+            sub: id,
+            email,
+            given_name: firstName,
+            family_name: lastName,
+          };
     return Promise.resolve({ data });
   };
 
@@ -36,11 +45,12 @@ describe('Authentication', () => {
 
   describe('Registration via email', () => {
     it('should register a new user when request is ok', async () => {
-      const {
-        email, password, firstName, lastName,
-      } = UserFactory();
+      const { email, password, firstName, lastName } = UserFactory();
       const req = {
-        email, password, firstName, lastName,
+        email,
+        password,
+        firstName,
+        lastName,
       };
       const res = await request(app)
         .post('/v1/auth/register')
@@ -165,7 +175,10 @@ describe('Authentication', () => {
     });
 
     it('should return error when accessToken is not valid', async () => {
-      sandbox.stub(axios, 'get').rejects({ name: 'AuthStrategiesError', status: httpStatus.UNAUTHORIZED });
+      sandbox.stub(axios, 'get').rejects({
+        name: 'AuthStrategiesError',
+        status: httpStatus.UNAUTHORIZED,
+      });
       await request(app)
         .post('/v1/auth/google')
         .send({ access_token: 'some_token' })
@@ -222,7 +235,7 @@ describe('Authentication', () => {
         .send({ email: 'some@email.com' })
         .expect(httpStatus.BAD_REQUEST);
 
-      expect(res.body.message).to.eq('Can\'t find user with this email');
+      expect(res.body.message).to.eq("Can't find user with this email");
     });
 
     it('should set new password and delete  after reset', async () => {
@@ -297,7 +310,10 @@ describe('Authentication', () => {
     });
 
     it('should return error when accessToken is not valid', async () => {
-      sandbox.stub(axios, 'get').rejects({ name: 'AuthStrategiesError', status: httpStatus.UNAUTHORIZED });
+      sandbox.stub(axios, 'get').rejects({
+        name: 'AuthStrategiesError',
+        status: httpStatus.UNAUTHORIZED,
+      });
       await request(app)
         .post('/v1/auth/facebook')
         .send({ access_token: 'some_token' })

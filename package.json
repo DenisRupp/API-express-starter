@@ -11,14 +11,14 @@
     "yarn": "*"
   },
   "scripts": {
-    "precommit": "yarn lint",
+    "precommit": "pretty-quick --staged && yarn lint",
     "prestart": "yarn docs",
     "pretest": "NODE_ENV=test yarn migrate",
     "start": "yarn migrate && pm2 start ecosystem.config.js --only API --env production",
     "dev": "yarn migrate && yarn docs && pm2 start ecosystem.config.js --only API --env develop",
     "local": "yarn migrate && pm2 start ecosystem.config.js --only API_LOCAL && pm2 logs",
-    "lint": "eslint **/*.js --ignore-path .gitignore --ignore-pattern internals/scripts",
-    "lint:fix": "yarn lint -- --fix",
+    "lint": "eslint . --ext .js --ignore-path .gitignore --ignore-pattern internals/scripts",
+    "lint:fix": "pretty-quick --staged && yarn lint -- --fix",
     "lint:watch": "yarn lint -- --watch",
     "test": "cross-env NODE_ENV=test mocha --timeout 20000 --recursive src/api/tests",
     "test:coverage": "cross-env NODE_ENV=test nyc --reporter=html --reporter=text mocha --timeout 20000 --recursive src/api/tests",
@@ -31,7 +31,7 @@
     "deploy": "sh ./deploy.sh",
     "docs": "apidoc -i src -o docs",
     "migrate": "sequelize db:migrate",
-    "docs-examples" : "cross-env NODE_ENV=test mocha --reporter supersamples src/api/tests/integration/",
+    "docs-examples": "cross-env NODE_ENV=test mocha --reporter supersamples src/api/tests/integration/",
     "seeds": "sequelize db:seed"
   },
   "repository": {
@@ -100,18 +100,27 @@
     "chai": "^4.1.0",
     "chai-as-promised": "^7.1.1",
     "coveralls": "^3.0.0",
-    "eslint": "^4.19.0",
+    "eslint": "4.19.1",
     "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-config-prettier": "2.9.0",
     "eslint-plugin-import": "^2.9.0",
+    "eslint-plugin-prettier": "2.6.0",
     "husky": "^0.14.3",
     "mocha": "^3.3.0",
     "nyc": "^11.6.0",
     "opn-cli": "^3.1.0",
+    "prettier": "1.13.4",
+    "pretty-quick": "^1.6.0",
     "sinon": "^4.5.0",
     "sinon-chai": "^2.10.0",
     "supertest": "^3.0.0"
   },
   "eslintIgnore": [
-    "src/api/database/, ecosystem.config.js"
-  ]
+    "src/api/database/",
+    "ecosystem.config.js"
+  ],
+  "prettier": {
+    "trailingComma": "all",
+    "singleQuote": true
+  }
 }

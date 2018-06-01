@@ -2,6 +2,7 @@
 const axios = require('axios');
 const httpStatus = require('http-status');
 const { User } = require('../models');
+const { ApiError } = require('../utils/customErrors');
 
 class StrategiesError extends Error {
   constructor(message) {
@@ -11,14 +12,22 @@ class StrategiesError extends Error {
   }
 }
 
-exports.facebook = async (access_token) => {
+const authError = new ApiError({
+  message: 'Invalid email or password',
+  status: httpStatus.BAD_REQUEST,
+});
+
+exports.facebook = async access_token => {
   try {
     const fields = 'id, name, email, picture';
     const url = 'https://graph.facebook.com/me';
     const params = { access_token, fields };
     const response = await axios.get(url, { params });
     const {
-      id, email, first_name: firstName, last_name: lastName,
+      id,
+      email,
+      first_name: firstName,
+      last_name: lastName,
     } = response.data;
     return {
       service: 'facebook',
@@ -32,13 +41,16 @@ exports.facebook = async (access_token) => {
   }
 };
 
-exports.google = async (access_token) => {
+exports.google = async access_token => {
   try {
     const url = 'https://www.googleapis.com/oauth2/v3/userinfo';
     const params = { access_token };
     const response = await axios.get(url, { params });
     const {
-      sub, email, given_name: firstName, family_name: lastName,
+      sub,
+      email,
+      given_name: firstName,
+      family_name: lastName,
     } = response.data;
     return {
       service: 'google',
@@ -53,7 +65,6 @@ exports.google = async (access_token) => {
 };
 
 exports.local = async (req, res, next) => {
-  const authError = { message: 'Invalid email or password', status: httpStatus.BAD_REQUEST };
   const { email, password } = req.body;
 
   try {
@@ -63,7 +74,9 @@ exports.local = async (req, res, next) => {
 
     // Make sure the password is correct
     const isMatch = await user.verifyPassword(password);
-    if (!isMatch) { throw authError; }
+    if (!isMatch) {
+      throw authError;
+    }
     req.user = user;
     next();
   } catch (error) {
