@@ -107,7 +107,6 @@ exports.reset = async (req, res, next) => {
   try {
     const { email } = req.body;
     const user = await User.findOne({ where: { email } });
-
     if (!user) {
       throw new ApiError({
         message: "Can't find user with this email",
@@ -115,7 +114,6 @@ exports.reset = async (req, res, next) => {
       });
     }
     await user.resetPassword();
-
     res.json({ message: 'Email successfully send' });
   } catch (e) {
     next(e);
