@@ -164,7 +164,7 @@ router
   .post(
     validate(rules.oAuth),
     passport.authenticate('facebook', { session: false }),
-    controller.oAuth
+    controller.oAuth,
   );
 
 /**
@@ -190,7 +190,7 @@ router
   .post(
     validate(rules.oAuth),
     passport.authenticate('google', { session: false }),
-    controller.oAuth
+    controller.oAuth,
   );
 
 module.exports = router;

@@ -62,7 +62,7 @@ exports.logout = async (req, res) => {
   if (refreshToken) {
     await User.update(
       { refreshToken: null },
-      { where: { 'refreshToken.token': refreshToken }, limit: 1 }
+      { where: { 'refreshToken.token': refreshToken }, limit: 1 },
     );
   }
 
