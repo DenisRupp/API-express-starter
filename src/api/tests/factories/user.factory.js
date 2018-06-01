@@ -9,7 +9,7 @@ module.exports = params => {
       password: faker.phone.phoneNumber(),
       email: faker.internet.email().toLowerCase(),
     },
-    params
+    params,
   );
 
   return new User(properties);

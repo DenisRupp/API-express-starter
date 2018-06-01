@@ -36,7 +36,7 @@ describe('Test mailer service', () => {
       data.to,
       data.subject,
       data.template,
-      data.context
+      data.context,
     );
     sinon.assert.calledWith(sendMailSpy, data);
     expect(mail).to.eq('Success');
