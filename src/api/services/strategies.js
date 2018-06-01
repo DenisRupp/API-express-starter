@@ -2,6 +2,7 @@
 const axios = require('axios');
 const httpStatus = require('http-status');
 const { User } = require('../models');
+const { ApiError } = require('../utils/customErrors');
 
 class StrategiesError extends Error {
   constructor(message) {
@@ -10,6 +11,11 @@ class StrategiesError extends Error {
     this.status = httpStatus.UNAUTHORIZED;
   }
 }
+
+const authError = new ApiError({
+  message: 'Invalid email or password',
+  status: httpStatus.BAD_REQUEST,
+});
 
 exports.facebook = async (access_token) => {
   try {
@@ -53,7 +59,6 @@ exports.google = async (access_token) => {
 };
 
 exports.local = async (req, res, next) => {
-  const authError = { message: 'Invalid email or password', status: httpStatus.BAD_REQUEST };
   const { email, password } = req.body;
 
   try {

@@ -1,4 +1,4 @@
-/* eslint-disable no-restricted-syntax,no-param-reassign,no-prototype-builtins */
+/* eslint-disable no-restricted-syntax */
 const httpStatus = require('http-status');
 
 /**
@@ -38,18 +38,20 @@ const wrongUrlParam = (err, req, res, next) => {
  * Unexpected errors handler
  */
 const other = (err, req, res, next) => {
+  if (!err.isOperational) {
+    next(err);
+    return;
+  }
+
   const response = {
-    status: (err.status) ? err.status : httpStatus.INTERNAL_SERVER_ERROR,
+    status: err.status,
     message: err.message,
     errors: err.errors,
     stack: err.stack,
   };
 
-  if (process.env.NODE_ENV !== 'development') {
-    delete response.stack;
-  }
-  res.status(response.status);
-  res.json(response);
+  if (process.env.NODE_ENV !== 'development') delete response.stack;
+  res.status(response.status).json(response);
 };
 
 module.exports = [formValidation, invalidToken, wrongUrlParam, other];
