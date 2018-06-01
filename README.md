@@ -3,6 +3,7 @@
 [![Build Status](https://travis-ci.org/DenisRupp/API-express-starter.svg?branch=master)](https://travis-ci.org/DenisRupp/API-express-starter)
 [![Coverage Status](https://coveralls.io/repos/github/DenisRupp/express-ES2017/badge.svg?branch=master)](https://coveralls.io/github/DenisRupp/express-ES2017?branch=master)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
+[![Greenkeeper badge](https://badges.greenkeeper.io/DenisRupp/API-express-starter.svg)](https://greenkeeper.io/)
 
 Boilerplate/Generator/Starter Project for building RESTful APIs and microservices using Node.js, Express and Sequelize
 
