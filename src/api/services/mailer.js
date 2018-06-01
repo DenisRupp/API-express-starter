@@ -29,7 +29,11 @@ module.exports = (to, subject, template, context) => {
   // allow use front url for email links
   context.site_url = process.env.SITE_URL;
   const email = {
-    from, to, subject, template, context,
+    from,
+    to,
+    subject,
+    template,
+    context,
   };
 
   return mailer.sendMail(email).then(() => mailer.close());

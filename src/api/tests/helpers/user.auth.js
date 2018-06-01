@@ -1,6 +1,8 @@
 const UserFactory = require('../factories/user.factory');
-const { generateAccessToken, generateRefreshToken } = require('../../../api/services/tokenGenerator');
-
+const {
+  generateAccessToken,
+  generateRefreshToken,
+} = require('../../../api/services/tokenGenerator');
 
 module.exports = async (role = 'user') => {
   let user = await UserFactory({ role }).save();

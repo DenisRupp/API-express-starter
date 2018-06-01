@@ -11,7 +11,8 @@ const router = express.Router();
  */
 router.param('userId', controller.load);
 
-router.route('/')
+router
+  .route('/')
   /**
    * @api {get} v1/users List Users
    * @apiDescription Get a list of users
@@ -59,8 +60,8 @@ router.route('/')
    */
   .post(auth('admin'), validate(rules.createUser), controller.create);
 
-
-router.route('/profile')
+router
+  .route('/profile')
   /**
    * @api {get} v1/users/profile User Profile
    * @apiDescription Get logged in user profile information
@@ -82,8 +83,8 @@ router.route('/profile')
    */
   .get(auth('user'), controller.loggedIn);
 
-
-router.route('/:userId')
+router
+  .route('/:userId')
   /**
    * @api {get} v1/users/:id Get User
    * @apiDescription Get user information
@@ -153,6 +154,5 @@ router.route('/:userId')
    * @apiError (Not Found 404)    NotFound      User does not exist
    */
   .delete(auth('admin'), controller.remove);
-
 
 module.exports = router;

@@ -5,7 +5,10 @@ const httpStatus = require('http-status');
  * Change sequelize validation errors
  */
 const formValidation = (err, req, res, next) => {
-  if (err.name === 'SequelizeValidationError' || err.name === 'SequelizeUniqueConstraintError') {
+  if (
+    err.name === 'SequelizeValidationError' ||
+    err.name === 'SequelizeUniqueConstraintError'
+  ) {
     const errors = {};
 
     for (const error of err.errors) {
@@ -22,7 +25,8 @@ const formValidation = (err, req, res, next) => {
  */
 const invalidToken = (err, req, res, next) => {
   if (err.name !== 'UnauthorizedError') return next(err);
-  const message = (err.message === 'jwt expired') ? 'Token has been expired' : 'Invalid token';
+  const message =
+    err.message === 'jwt expired' ? 'Token has been expired' : 'Invalid token';
   return res.status(httpStatus.UNAUTHORIZED).json({ message });
 };
 
@@ -31,7 +35,9 @@ const invalidToken = (err, req, res, next) => {
  */
 const wrongUrlParam = (err, req, res, next) => {
   if (err.name !== 'CastError') return next(err);
-  return res.status(404).json({ message: `Can't find element with ${err.path} ${err.value}` });
+  return res
+    .status(404)
+    .json({ message: `Can't find element with ${err.path} ${err.value}` });
 };
 
 /**

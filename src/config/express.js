@@ -13,9 +13,9 @@ const strategies = require('./passport');
 const passport = require('passport');
 
 /**
-* Express instance
-* @public
-*/
+ * Express instance
+ * @public
+ */
 const app = express();
 
 // request logging. dev: console | production: file

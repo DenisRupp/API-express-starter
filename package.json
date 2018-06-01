@@ -11,7 +11,7 @@
     "yarn": "*"
   },
   "scripts": {
-    "precommit": "yarn lint",
+    "precommit": "pretty-quick --staged && yarn lint",
     "prestart": "yarn docs",
     "pretest": "NODE_ENV=test yarn migrate",
     "start": "yarn migrate && pm2 start ecosystem.config.js --only API --env production",
@@ -114,5 +114,44 @@
   },
   "eslintIgnore": [
     "src/api/database/, ecosystem.config.js"
-  ]
+  ],
+  "eslintConfig": {
+    "rules": {
+      "no-console": 0,
+      "no-underscore-dangle": 0,
+      "no-unused-vars": [
+        "error",
+        {
+          "argsIgnorePattern": "next"
+        }
+      ],
+      "no-use-before-define": [
+        "error",
+        {
+          "variables": false
+        }
+      ],
+      "no-multi-str": 0,
+      "no-plusplus": [
+        "error",
+        {
+          "allowForLoopAfterthoughts": true
+        }
+      ],
+      "no-throw-literal": "error"
+    },
+    "env": {
+      "node": true,
+      "mocha": true
+    },
+    "parserOptions": {
+      "ecmaVersion": 8
+    },
+    "extends": [
+      "airbnb-base"
+    ]
+  },
+  "prettier": {
+    "trailingComma": "es5"
+  }
 }

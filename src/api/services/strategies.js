@@ -17,14 +17,17 @@ const authError = new ApiError({
   status: httpStatus.BAD_REQUEST,
 });
 
-exports.facebook = async (access_token) => {
+exports.facebook = async access_token => {
   try {
     const fields = 'id, name, email, picture';
     const url = 'https://graph.facebook.com/me';
     const params = { access_token, fields };
     const response = await axios.get(url, { params });
     const {
-      id, email, first_name: firstName, last_name: lastName,
+      id,
+      email,
+      first_name: firstName,
+      last_name: lastName,
     } = response.data;
     return {
       service: 'facebook',
@@ -38,13 +41,16 @@ exports.facebook = async (access_token) => {
   }
 };
 
-exports.google = async (access_token) => {
+exports.google = async access_token => {
   try {
     const url = 'https://www.googleapis.com/oauth2/v3/userinfo';
     const params = { access_token };
     const response = await axios.get(url, { params });
     const {
-      sub, email, given_name: firstName, family_name: lastName,
+      sub,
+      email,
+      given_name: firstName,
+      family_name: lastName,
     } = response.data;
     return {
       service: 'google',
@@ -68,7 +74,9 @@ exports.local = async (req, res, next) => {
 
     // Make sure the password is correct
     const isMatch = await user.verifyPassword(password);
-    if (!isMatch) { throw authError; }
+    if (!isMatch) {
+      throw authError;
+    }
     req.user = user;
     next();
   } catch (error) {

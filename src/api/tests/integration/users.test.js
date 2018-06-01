@@ -17,7 +17,9 @@ describe('Users route', () => {
 
     await Promise.all(promises);
     const adminAuth = await getAuthorizedUser('admin');
-    if (adminAuth) { adminToken = adminAuth.authToken; }
+    if (adminAuth) {
+      adminToken = adminAuth.authToken;
+    }
   });
 
   describe('Users list', () => {

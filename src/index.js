@@ -6,7 +6,7 @@ const app = require('./config/express');
 app.listen(port, () => console.info(`Server started on port ${port} (${env})`));
 
 /**
-* Exports express
-* @public
-*/
+ * Exports express
+ * @public
+ */
 module.exports = app;

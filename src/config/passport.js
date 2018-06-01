@@ -2,7 +2,6 @@ const BearerStrategy = require('passport-http-bearer');
 const strategies = require('../api/services/strategies');
 const { User } = require('../api/models');
 
-
 const oAuth = service => async (token, done) => {
   try {
     const userData = await strategies[service](token);
