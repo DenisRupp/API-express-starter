@@ -31,11 +31,12 @@
     "deploy": "sh ./deploy.sh",
     "docs": "apidoc -i src -o docs",
     "migrate": "sequelize db:migrate",
+    "docs-examples" : "cross-env NODE_ENV=test mocha --reporter supersamples src/api/tests/integration/",
     "seeds": "sequelize db:seed"
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:danielfsousa/express-rest-es2017-boilerplate.git"
+    "url": "git@github.com:DenisRupp/API-express-starter.git"
   },
   "keywords": [
     "express",
@@ -91,6 +92,7 @@
     "pm2": "^2.10.1",
     "sequelize": "^4.37.4",
     "sequelize-cli": "^4.0.0",
+    "supersamples": "^1.4.0",
     "uuid": "^3.2.1"
   },
   "devDependencies": {

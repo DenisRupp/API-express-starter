@@ -84,7 +84,6 @@ router.route('/logout')
  * @apiGroup Auth
  * @apiPermission public
  *
- * @apiParam  {String}  email         User's email
  * @apiParam  {String}  refreshToken  Refresh token required when user logged in
  *
  * @apiSuccess (Success 200) {String}  token.auth     Access Token's type
