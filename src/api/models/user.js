@@ -46,7 +46,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.JSONB,
     },
     role: {
-      type: DataTypes.ENUM('user', 'admin'),
+      type: DataTypes.ENUM(['user', 'admin']),
       defaultValue: 'user',
     },
     refreshToken: DataTypes.JSONB,

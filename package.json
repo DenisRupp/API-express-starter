@@ -119,6 +119,10 @@
     "src/api/database/",
     "ecosystem.config.js"
   ],
+  "prettier": {
+    "trailingComma": "all",
+    "singleQuote": true
+  },
   "greenkeeper": {
     "lockfiles": {
       "outOfRangeUpdatesOnly": true
