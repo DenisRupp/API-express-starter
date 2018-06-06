@@ -8,9 +8,6 @@ module.exports = {
     host: process.env.DB_HOST,
     dialect: 'postgres',
     operatorsAliases,
-    define: {
-      underscored: true,
-    },
   },
   test: {
     username: process.env.DB_USER,
@@ -20,9 +17,6 @@ module.exports = {
     dialect: 'postgres',
     logging: false,
     operatorsAliases,
-    define: {
-      underscored: true,
-    },
   },
   production: {
     username: process.env.DB_USER,
@@ -32,8 +26,5 @@ module.exports = {
     dialect: 'postgres',
     logging: false,
     operatorsAliases,
-    define: {
-      underscored: true,
-    },
   },
 };
