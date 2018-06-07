@@ -1,8 +1,30 @@
-const db = require('../../models');
+const { sequelize } = require('../../models');
+const Sequelize = require('sequelize');
+const Umzug = require('umzug');
+const path = require('path');
+
 /**
  * Global mocha hooks
  */
 before(async () => {
-  await db.sequelize.sync({ force: true });
+  await runMigration();
+  console.log('--> Run migrations');
+});
+
+after(async () => {
+  await sequelize.drop({ force: true });
   console.log('--> Drop database');
 });
+
+const runMigration = () => {
+  const umzug = new Umzug({
+    storage: 'sequelize',
+    storageOptions: { sequelize },
+    migrations: {
+      params: [sequelize.getQueryInterface(), Sequelize],
+      path: path.join(__dirname, '../../../database/migrations'),
+    },
+  });
+
+  return umzug.up();
+};

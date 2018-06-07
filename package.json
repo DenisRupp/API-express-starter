@@ -13,7 +13,6 @@
   "scripts": {
     "precommit": "pretty-quick --staged && yarn lint",
     "prestart": "yarn docs",
-    "pretest": "NODE_ENV=test yarn migrate",
     "start": "yarn migrate && pm2 start ecosystem.config.js --only API --env production",
     "dev": "yarn migrate && yarn docs && pm2 start ecosystem.config.js --only API --env develop",
     "local": "yarn migrate && pm2 start ecosystem.config.js --only API_LOCAL && pm2 logs",
@@ -93,6 +92,7 @@
     "sequelize": "^4.37.4",
     "sequelize-cli": "^4.0.0",
     "supersamples": "^1.4.0",
+    "umzug": "^2.1.0",
     "uuid": "^3.2.1"
   },
   "devDependencies": {
