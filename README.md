@@ -62,6 +62,11 @@ Set database configuration:
 ```bash
 cp src/database/config.example.js src/database/config.js
 ```
+Crete database
+
+```bash
+sequelize db:create --env development
+```
 
 ## Running Locally
 
