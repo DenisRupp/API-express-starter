@@ -48,18 +48,6 @@ describe('Users route', () => {
     });
   });
 
-  describe('Show user profile', () => {
-    it('should show current user info', async () => {
-      const userAuth = await getAuthorizedUser();
-      const res = await request(app)
-        .get('/v1/users/profile')
-        .set('Authorization', `Bearer ${userAuth.authToken}`)
-        .send({});
-      expect(res.status).to.eq(httpStatus.OK);
-      expect(res.body.id).to.eq(userAuth.user.id);
-    });
-  });
-
   describe('Show user by id', () => {
     it('should show certain user info for admin', async () => {
       const user = await UserFactory().save();

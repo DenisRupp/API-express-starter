@@ -11,7 +11,7 @@ module.exports = {
     return { token, expires };
   },
   generateAccessToken: user =>
-    jwt.sign({ id: user.id }, process.env.SECRET_STRING, {
+    jwt.sign({ id: user.id, email: user.email }, process.env.SECRET_STRING, {
       expiresIn: process.env.AUTH_TOKEN_LIFE,
     }),
 };

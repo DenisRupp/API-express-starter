@@ -24,12 +24,6 @@ exports.load = async (req, res, next, id) => {
 exports.get = (req, res) => res.json(req.locals.user.transform());
 
 /**
- * Get logged in user info
- * @public
- */
-exports.loggedIn = (req, res) => res.json(req.user.transform());
-
-/**
  * Create new user
  * @public
  */

@@ -52,8 +52,7 @@ exports.register = [
  */
 exports.login = [
   (req, res, next) => {
-    passport.authenticate('local', { session: false }, (err, user, info) => {
-      console.log(err, user, info);
+    passport.authenticate('local', { session: false }, (err, user) => {
       if (err || !user) {
         return res.status(400).json({
           message: err ? err.message : 'Login failed',
@@ -61,8 +60,7 @@ exports.login = [
         });
       }
 
-      req.login(user, { session: false }, error => next(error));
-      return next();
+      return req.login(user, { session: false }, error => next(error));
     })(req, res, next);
   },
   authResponse,
