@@ -4,6 +4,15 @@ const httpStatus = require('http-status');
 const { User } = require('../models');
 const { ApiError } = require('../utils/customErrors');
 
+const invalidToken = {
+  message: 'Invalid token',
+  status: httpStatus.UNAUTHORIZED,
+};
+const userBlocked = {
+  message: 'User is blocked',
+  status: httpStatus.UNAUTHORIZED,
+};
+
 class StrategiesError extends Error {
   constructor(message) {
     super(message);
@@ -37,7 +46,7 @@ exports.facebook = async access_token => {
       email,
     };
   } catch (e) {
-    throw new StrategiesError('Invalid google access token');
+    throw new StrategiesError('Invalid facebook access token');
   }
 };
 
@@ -64,22 +73,20 @@ exports.google = async access_token => {
   }
 };
 
-exports.local = async (req, res, next) => {
-  const { email, password } = req.body;
+exports.local = async (email, password) => {
+  if (!email || !password) throw authError;
+  const user = await User.findOne({ where: { email } });
+  if (!user) throw authError;
 
-  try {
-    if (!req.body.email || !req.body.password) throw authError;
-    const user = await User.findOne({ where: { email } });
-    if (!user) throw authError;
+  // Make sure the password is correct
+  const isMatch = await user.verifyPassword(password);
+  if (!isMatch) throw authError;
+  return user;
+};
 
-    // Make sure the password is correct
-    const isMatch = await user.verifyPassword(password);
-    if (!isMatch) {
-      throw authError;
-    }
-    req.user = user;
-    next();
-  } catch (error) {
-    next(error);
-  }
+exports.jwt = async id => {
+  const user = await User.findById(id);
+  if (!user) throw new ApiError(invalidToken);
+  if (!user.isActive) throw new ApiError(userBlocked);
+  return user;
 };

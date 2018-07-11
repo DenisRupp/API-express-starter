@@ -42,6 +42,8 @@ app.use(cors());
 app.use(passport.initialize());
 passport.use('facebook', strategies.facebook);
 passport.use('google', strategies.google);
+passport.use('local', strategies.local);
+passport.use('jwt', strategies.jwt);
 
 // mount api v1 routes
 app.use('/v1', routes);
