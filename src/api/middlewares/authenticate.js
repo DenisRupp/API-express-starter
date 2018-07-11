@@ -30,14 +30,18 @@ function hasPermissions(userRole, allowedRole) {
 
 module.exports = (role = 'guest') => (req, res, next) => {
   passport.authenticate('jwt', { session: false }, (error, user) => {
-    if (error) throw new ApiError(invalidToken);
+    if (error) {
+      return next(new ApiError(invalidToken));
+    }
     if (role !== 'guest') {
-      if (!user.isActive) throw new ApiError(userBlocked);
-      if (!hasPermissions(user.role, role)) throw new ApiError(noPermissions);
+      if (!user.isActive) {
+        return next(new ApiError(userBlocked));
+      }
+      if (!hasPermissions(user.role, role)) {
+        return next(new ApiError(noPermissions));
+      }
     }
 
-    req.login(user, { session: false }, err => {
-      next(err);
-    });
+    return req.login(user, { session: false }, err => next(err));
   })(req, res, next);
 };

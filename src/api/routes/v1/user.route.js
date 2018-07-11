@@ -62,7 +62,7 @@ router
 router
   .route('/:userId')
   /**
-   * @api {get} v1/users/:id Get User
+   * @api {get} v1/users/:userId Get User
    * @apiDescription Get user information
    * @apiVersion 1.0.0
    * @apiName GetUser
@@ -84,7 +84,7 @@ router
    */
   .get(controller.get)
   /**
-   * @api {patch} v1/users/:id Update User
+   * @api {patch} v1/users/:userId Update User
    * @apiDescription Update some fields of a user document
    * @apiVersion 1.0.0
    * @apiName UpdateUser
@@ -114,7 +114,7 @@ router
    */
   .patch(validate(rules.updateUser), controller.update)
   /**
-   * @api {patch} v1/users/:id Delete User
+   * @api {patch} v1/users/:userId Delete User
    * @apiDescription Delete a user
    * @apiVersion 1.0.0
    * @apiName DeleteUser
