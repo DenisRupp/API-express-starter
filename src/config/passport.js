@@ -12,43 +12,47 @@ const oAuth = service => async (token, cb) => {
   try {
     const userData = await strategies[service](token);
     const user = await User.oAuthLogin(userData);
-    return cb(null, user);
+    cb(null, user);
   } catch (err) {
-    return cb(err);
+    cb(err);
   }
 };
 
-const localAuth = async (email, password, cb) => {
-  try {
-    const user = await strategies.local();
-    return cb(null, user);
-  } catch (e) {
-    return cb(e);
-  }
-};
-
-const jwtAuth = async (jwtPayload, cb) => {
-  try {
-    const user = await strategies.jwt(jwtPayload.id);
-    return cb(null, user);
-  } catch (e) {
-    return cb(e);
-  }
-};
-
-exports.facebook = new BearerStrategy(oAuth('facebook'));
-exports.google = new BearerStrategy(oAuth('google'));
+/**
+ * Provide user by auth token, user can be empty
+ */
 exports.jwt = new JWTStrategy(
   {
     jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
     secretOrKey: process.env.SECRET_STRING,
   },
-  jwtAuth,
+  async (jwtPayload, cb) => {
+    try {
+      const user = await User.findById(jwtPayload.id);
+      cb(null, user);
+    } catch (e) {
+      cb(e);
+    }
+  },
 );
+
+/**
+ * Provide user by email and password, user can't be empty
+ */
 exports.local = new LocalStrategy(
   {
     usernameField: 'email',
     passwordField: 'password',
   },
-  localAuth,
+  async (email, password, cb) => {
+    try {
+      const user = await strategies.local(email, password);
+      cb(null, user);
+    } catch (e) {
+      cb(e);
+    }
+  },
 );
+
+exports.facebook = new BearerStrategy(oAuth('facebook'));
+exports.google = new BearerStrategy(oAuth('google'));

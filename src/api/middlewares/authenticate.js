@@ -1,5 +1,4 @@
-const expressJwt = require('express-jwt');
-const { User } = require('../models');
+const passport = require('passport');
 const httpStatus = require('http-status');
 const { ApiError } = require('../utils/customErrors');
 
@@ -29,22 +28,16 @@ function hasPermissions(userRole, allowedRole) {
   );
 }
 
-module.exports = (role = 'guest') => [
-  expressJwt({ secret: process.env.SECRET_STRING }),
-  async (req, res, next) => {
-    try {
-      const user = await User.findById(req.user.id);
-
-      if (role !== 'guest') {
-        if (!user) throw new ApiError(invalidToken);
-        if (!user.isActive) throw new ApiError(userBlocked);
-        if (!hasPermissions(user.role, role)) throw new ApiError(noPermissions);
-      }
-
-      req.user = user;
-      next();
-    } catch (error) {
-      next(error);
+module.exports = (role = 'guest') => (req, res, next) => {
+  passport.authenticate('jwt', { session: false }, (error, user) => {
+    if (error) throw new ApiError(invalidToken);
+    if (role !== 'guest') {
+      if (!user.isActive) throw new ApiError(userBlocked);
+      if (!hasPermissions(user.role, role)) throw new ApiError(noPermissions);
     }
-  },
-];
+
+    req.login(user, { session: false }, err => {
+      next(err);
+    });
+  })(req, res, next);
+};

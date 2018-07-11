@@ -1,17 +1,7 @@
-/* eslint-disable camelcase */
 const axios = require('axios');
 const httpStatus = require('http-status');
 const { User } = require('../models');
 const { ApiError } = require('../utils/customErrors');
-
-const invalidToken = {
-  message: 'Invalid token',
-  status: httpStatus.UNAUTHORIZED,
-};
-const userBlocked = {
-  message: 'User is blocked',
-  status: httpStatus.UNAUTHORIZED,
-};
 
 class StrategiesError extends Error {
   constructor(message) {
@@ -26,11 +16,11 @@ const authError = new ApiError({
   status: httpStatus.BAD_REQUEST,
 });
 
-exports.facebook = async access_token => {
+exports.facebook = async accessToken => {
   try {
     const fields = 'id, name, email, picture';
     const url = 'https://graph.facebook.com/me';
-    const params = { access_token, fields };
+    const params = { access_token: accessToken, fields };
     const response = await axios.get(url, { params });
     const {
       id,
@@ -50,10 +40,10 @@ exports.facebook = async access_token => {
   }
 };
 
-exports.google = async access_token => {
+exports.google = async accessToken => {
   try {
     const url = 'https://www.googleapis.com/oauth2/v3/userinfo';
-    const params = { access_token };
+    const params = { access_token: accessToken };
     const response = await axios.get(url, { params });
     const {
       sub,
@@ -81,12 +71,5 @@ exports.local = async (email, password) => {
   // Make sure the password is correct
   const isMatch = await user.verifyPassword(password);
   if (!isMatch) throw authError;
-  return user;
-};
-
-exports.jwt = async id => {
-  const user = await User.findById(id);
-  if (!user) throw new ApiError(invalidToken);
-  if (!user.isActive) throw new ApiError(userBlocked);
   return user;
 };
