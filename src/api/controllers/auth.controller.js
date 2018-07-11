@@ -1,6 +1,6 @@
 const httpStatus = require('http-status');
+const passport = require('passport');
 const { User } = require('../models');
-const { local: getLocalUser } = require('../services/strategies');
 const { ApiError } = require('../utils/customErrors');
 const {
   generateRefreshToken,
@@ -50,7 +50,23 @@ exports.register = [
  * Returns jwt token if valid username and password is provided
  * @public
  */
-exports.login = [getLocalUser, authResponse];
+exports.login = [
+  (req, res, next) => {
+    passport.authenticate('local', { session: false }, (err, user, info) => {
+      console.log(err, user, info);
+      if (err || !user) {
+        return res.status(400).json({
+          message: err ? err.message : 'Login failed',
+          user,
+        });
+      }
+
+      req.login(user, { session: false }, error => next(error));
+      return next();
+    })(req, res, next);
+  },
+  authResponse,
+];
 
 /**
  * Delete refresh token
