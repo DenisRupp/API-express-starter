@@ -1,6 +1,7 @@
 const httpStatus = require('http-status');
 const { omit } = require('lodash');
 const { User } = require('../models');
+const { ApiError } = require('../utils/customErrors');
 const paginate = require('../middlewares/paginationResponse');
 
 /**
@@ -10,10 +11,11 @@ const paginate = require('../middlewares/paginationResponse');
 exports.load = async (req, res, next, id) => {
   try {
     const user = await User.findById(id);
+    if (!user) throw new ApiError({ status: httpStatus.NOT_FOUND });
     req.locals = { user };
-    return next();
+    next();
   } catch (e) {
-    return next(e);
+    next(e);
   }
 };
 
@@ -21,7 +23,9 @@ exports.load = async (req, res, next, id) => {
  * Get user
  * @public
  */
-exports.get = (req, res) => res.json(req.locals.user.transform());
+exports.get = (req, res) => {
+  res.json(req.locals.user.transform());
+};
 
 /**
  * Create new user
