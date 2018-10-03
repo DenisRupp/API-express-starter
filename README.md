@@ -130,13 +130,6 @@ yarn test:watch
 yarn coverage
 ```
 
-## Validate
-
-```bash
-# run lint and tests
-yarn validate
-```
-
 ## Logs
 
 ```bash
