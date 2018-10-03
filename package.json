@@ -95,6 +95,8 @@
     "sequelize-cli": "^4.0.0",
     "supersamples": "^1.4.0",
     "umzug": "^2.1.0",
+    "sinon": "^4.5.0",
+    "sinon-chai": "^2.10.0",
     "uuid": "^3.2.1"
   },
   "devDependencies": {
@@ -113,8 +115,6 @@
     "opn-cli": "^3.1.0",
     "prettier": "1.13.4",
     "pretty-quick": "^1.6.0",
-    "sinon": "^4.5.0",
-    "sinon-chai": "^2.10.0",
     "supertest": "^3.0.0"
   },
   "eslintIgnore": [
