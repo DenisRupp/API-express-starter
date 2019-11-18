@@ -79,7 +79,7 @@
     "lodash": "^4.17.5",
     "method-override": "^2.3.8",
     "moment-timezone": "^0.5.14",
-    "morgan": "^1.8.1",
+    "morgan": "^1.9.1",
     "nodemailer": "^4.6.4",
     "nodemailer-express-handlebars": "^3.0.0",
     "npm-merge-driver": "^2.3.5",
