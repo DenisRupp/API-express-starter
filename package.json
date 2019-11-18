@@ -12,7 +12,7 @@
   },
   "scripts": {
     "precommit": "pretty-quick --staged && yarn lint",
-    "prestart": "yarn docs",
+    "docker-test": "pm2 start ecosystem.config.js --env production",
     "start": "yarn migrate && pm2 start ecosystem.config.js --only API --env production",
     "dev": "yarn migrate && yarn docs && pm2 start ecosystem.config.js --only API --env develop",
     "local": "yarn migrate && pm2 start ecosystem.config.js --only API_LOCAL && pm2 logs",
