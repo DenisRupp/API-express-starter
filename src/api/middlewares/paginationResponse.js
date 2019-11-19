@@ -1,6 +1,7 @@
 module.exports = (req, res) => {
-  const { qty: limit, page } = req.query;
+  const { qty: limit = 10, page = 1 } = req.query;
   const { rows: docs, count: total } = req.pagination;
+
   return res.json({
     docs,
     total,

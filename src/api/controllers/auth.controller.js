@@ -1,7 +1,7 @@
 const httpStatus = require('http-status');
 const passport = require('passport');
 const { User } = require('../models');
-const { ApiError } = require('../utils/customErrors');
+const authErrors = require('../utils/customErrors/authErrors');
 const {
   generateRefreshToken,
   generateAccessToken,
@@ -98,12 +98,7 @@ exports.refresh = [
   async (req, res, next) => {
     try {
       const user = await User.getByRefreshToken(req.body.refreshToken);
-      if (!user) {
-        return next({
-          status: httpStatus.UNAUTHORIZED,
-          message: 'Refresh token is invalid',
-        });
-      }
+      if (!user) return next(authErrors.REFRESH_TOKEN_INVALID);
       req.user = user;
       return next();
     } catch (e) {
@@ -121,12 +116,7 @@ exports.reset = async (req, res, next) => {
   try {
     const { email } = req.body;
     const user = await User.findOne({ where: { email } });
-    if (!user) {
-      throw new ApiError({
-        message: "Can't find user with this email",
-        status: 400,
-      });
-    }
+    if (!user) throw authErrors.USER_NOT_FOUND;
     await user.resetPassword();
     res.json({ message: 'Email successfully send' });
   } catch (e) {
@@ -143,12 +133,7 @@ exports.changePassword = [
     try {
       const { resetToken, id, password } = req.body;
       const user = await User.findOne({ where: { resetToken, id } });
-      if (!user) {
-        throw new ApiError({
-          message: 'Reset password token is invalid',
-          status: 400,
-        });
-      }
+      if (!user) throw authErrors.RESET_TOKEN_INVALID;
       req.user = await user.update({ password, resetToken: null });
       next();
     } catch (e) {

@@ -1,6 +1,6 @@
 const passport = require('passport');
 const httpStatus = require('http-status');
-const { ApiError } = require('../utils/customErrors');
+const { ApiError } = require('../utils/customErrors/baseError');
 
 const roles = {
   admin: ['guest', 'user'],

@@ -1,10 +1,10 @@
 // set default environment
 process.env.NODE_ENV = 'test';
 
-const { sequelize } = require('../../models');
 const Sequelize = require('sequelize');
 const Umzug = require('umzug');
 const path = require('path');
+const { sequelize } = require('../../models');
 
 /**
  * Global mocha hooks

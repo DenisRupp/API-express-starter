@@ -1,8 +1,8 @@
 const router = require('express').Router();
+const passport = require('passport');
 const validate = require('../../validations/handler');
 const controller = require('../../controllers/auth.controller');
 const rules = require('../../validations/auth.validation');
-const passport = require('passport');
 
 /**
  * @api {post} v1/auth/register Register

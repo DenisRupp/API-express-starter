@@ -1,6 +1,12 @@
 /* eslint-disable no-param-reassign */
 const hbs = require('nodemailer-express-handlebars');
 const nodeMailer = require('nodemailer');
+const {
+  EMAIL_HOST,
+  EMAIL_SENDER,
+  EMAIL_PASSWORD,
+  SITE_URL,
+} = require('../../config/vars');
 
 const handlebarsConfig = {
   viewEngine: {
@@ -13,27 +19,28 @@ const handlebarsConfig = {
 };
 
 const emailConfig = {
-  host: process.env.EMAIL_HOST,
+  host: EMAIL_HOST,
   port: 465,
   secure: true, // true for 465, false for other ports
   auth: {
-    user: process.env.EMAIL_SENDER,
-    pass: process.env.EMAIL_PASSWORD,
+    user: EMAIL_SENDER,
+    pass: EMAIL_PASSWORD,
   },
 };
 
 module.exports = (to, subject, template, context) => {
-  const from = process.env.EMAIL_SENDER;
   const mailer = nodeMailer.createTransport(emailConfig);
   mailer.use('compile', hbs(handlebarsConfig));
   // allow use front url for email links
-  context.site_url = process.env.SITE_URL;
   const email = {
-    from,
+    from: EMAIL_SENDER,
     to,
     subject,
     template,
-    context,
+    context: {
+      ...context,
+      site_url: SITE_URL,
+    },
   };
 
   return mailer.sendMail(email).then(() => mailer.close());

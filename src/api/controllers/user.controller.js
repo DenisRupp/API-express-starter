@@ -1,7 +1,7 @@
 const httpStatus = require('http-status');
 const { omit } = require('lodash');
 const { User } = require('../models');
-const { ApiError } = require('../utils/customErrors');
+const { ApiError } = require('../utils/customErrors/baseError');
 const paginate = require('../middlewares/paginationResponse');
 
 /**
@@ -10,7 +10,7 @@ const paginate = require('../middlewares/paginationResponse');
  */
 exports.load = async (req, res, next, id) => {
   try {
-    const user = await User.findById(id);
+    const user = await User.findByPk(id);
     if (!user) throw new ApiError({ status: httpStatus.NOT_FOUND });
     req.locals = { user };
     next();

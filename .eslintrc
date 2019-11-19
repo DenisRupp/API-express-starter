@@ -8,7 +8,10 @@
       }
     ],
     "no-console": 0,
+    "consistent-return": 0,
     "no-underscore-dangle": 0,
+    "no-await-in-loop": 0,
+    "no-restricted-syntax": 0,
     "no-unused-vars": [
       "error",
       {
@@ -19,6 +22,12 @@
       "error",
       {
         "variables": false
+      }
+    ],
+    "import/no-extraneous-dependencies": [
+      "error",
+      {
+        "devDependencies": true
       }
     ],
     "no-multi-str": 0,
@@ -35,7 +44,7 @@
     "mocha": true
   },
   "parserOptions": {
-    "ecmaVersion": 8
+    "ecmaVersion": 2018
   },
   "extends": [
     "airbnb-base",

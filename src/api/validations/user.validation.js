@@ -1,4 +1,4 @@
-const { query, body, param } = require('express-validator/check');
+const { query, body, param } = require('express-validator');
 
 module.exports = {
   // GET /v1/users

@@ -1,10 +1,18 @@
 const request = require('supertest');
 const httpStatus = require('http-status');
+const sandbox = require('sinon');
 const { expect } = require('chai');
 const app = require('../../../index');
 const getAuthorizedUser = require('../helpers/user.auth');
+const truncate = require('../helpers/truncate');
 
 describe('Profile routes', () => {
+  beforeEach(async () => {
+    await truncate();
+  });
+
+  afterEach(() => sandbox.restore());
+
   describe('Show user profile', () => {
     it('should show current user info', async () => {
       const userAuth = await getAuthorizedUser();

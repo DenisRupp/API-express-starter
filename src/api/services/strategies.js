@@ -1,20 +1,6 @@
 const axios = require('axios');
-const httpStatus = require('http-status');
 const { User } = require('../models');
-const { ApiError } = require('../utils/customErrors');
-
-class StrategiesError extends Error {
-  constructor(message) {
-    super(message);
-    this.name = 'AuthStrategiesError';
-    this.status = httpStatus.UNAUTHORIZED;
-  }
-}
-
-const authError = new ApiError({
-  message: 'Invalid email or password',
-  status: httpStatus.BAD_REQUEST,
-});
+const authErrors = require('../utils/customErrors/authErrors');
 
 exports.facebook = async accessToken => {
   try {
@@ -36,7 +22,8 @@ exports.facebook = async accessToken => {
       email,
     };
   } catch (e) {
-    throw new StrategiesError('Invalid facebook access token');
+    console.error(e);
+    throw authErrors.INVALID_SOCIAL('facebook');
   }
 };
 
@@ -59,17 +46,17 @@ exports.google = async accessToken => {
       email,
     };
   } catch (e) {
-    throw new StrategiesError('Invalid google access token');
+    throw authErrors.INVALID_SOCIAL('google');
   }
 };
 
 exports.local = async (email, password) => {
-  if (!email || !password) throw authError;
-  const user = await User.findOne({ where: { email } });
-  if (!user) throw authError;
+  if (email && password) {
+    const user = await User.findOne({ where: { email } });
+    if (user && (await user.verifyPassword(password))) {
+      return user;
+    }
+  }
 
-  // Make sure the password is correct
-  const isMatch = await user.verifyPassword(password);
-  if (!isMatch) throw authError;
-  return user;
+  throw authErrors.INVALID_CREDENTIALS;
 };

@@ -4,12 +4,13 @@ const { expect } = require('chai');
 const app = require('../../../index');
 const UserFactory = require('../factories/user.factory');
 const getAuthorizedUser = require('../helpers/user.auth');
+const truncate = require('../helpers/truncate');
 
 describe('Users route', () => {
   let adminToken;
 
   before(async function before() {
-    this.timeout(5000);
+    await truncate();
     const promises = [];
     for (let i = 0; i < 10; i++) {
       promises.push(UserFactory().save());
@@ -66,6 +67,7 @@ describe('Users route', () => {
         .get(`/v1/users/${user.id}`)
         .set('Authorization', `Bearer ${userAuth.authToken}`)
         .send({});
+      console.error(res.body);
       expect(res.status).to.eq(httpStatus.FORBIDDEN);
     });
   });

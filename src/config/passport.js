@@ -1,8 +1,9 @@
 const BearerStrategy = require('passport-http-bearer');
-const strategies = require('../api/services/strategies');
 const passportLocal = require('passport-local');
 const passportJWT = require('passport-jwt');
+const strategies = require('../api/services/strategies');
 const { User } = require('../api/models');
+const { SECRET_STRING } = require('../config/vars');
 
 const LocalStrategy = passportLocal.Strategy;
 const ExtractJWT = passportJWT.ExtractJwt;
@@ -24,11 +25,11 @@ const oAuth = service => async (token, cb) => {
 exports.jwt = new JWTStrategy(
   {
     jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
-    secretOrKey: process.env.SECRET_STRING,
+    secretOrKey: SECRET_STRING,
   },
   async (jwtPayload, cb) => {
     try {
-      const user = await User.findById(jwtPayload.id);
+      const user = await User.findByPk(jwtPayload.id);
       cb(null, user);
     } catch (e) {
       cb(e);

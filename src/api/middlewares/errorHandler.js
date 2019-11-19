@@ -1,5 +1,6 @@
 /* eslint-disable no-restricted-syntax */
 const httpStatus = require('http-status');
+const { NODE_ENV } = require('../../config/vars');
 
 /**
  * Change sequelize validation errors
@@ -31,33 +32,25 @@ const invalidToken = (err, req, res, next) => {
 };
 
 /**
- * Catch not found elements
- */
-const wrongUrlParam = (err, req, res, next) => {
-  if (err.name !== 'CastError') return next(err);
-  return res
-    .status(404)
-    .json({ message: `Can't find element with ${err.path} ${err.value}` });
-};
-
-/**
  * Unexpected errors handler
  */
 const other = (err, req, res, next) => {
   if (!err.isOperational) {
-    next(err);
+    console.log(err);
+    res.status(err).json(err);
     return;
   }
 
   const response = {
     status: err.status,
     message: err.message,
-    errors: err.errors,
+    name: err.name,
+    errors: err.index,
     stack: err.stack,
   };
 
-  if (process.env.NODE_ENV !== 'development') delete response.stack;
+  if (NODE_ENV === 'production') delete response.stack;
   res.status(response.status).json(response);
 };
 
-module.exports = [formValidation, invalidToken, wrongUrlParam, other];
+module.exports = [formValidation, invalidToken, other];

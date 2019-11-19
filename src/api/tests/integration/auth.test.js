@@ -3,13 +3,14 @@ const request = require('supertest');
 const httpStatus = require('http-status');
 const { expect } = require('chai');
 const sinon = require('sinon');
-const app = require('../../../index');
-const UserFactory = require('../factories/user.factory');
-const { User } = require('../../models');
-const getAuthorizedUser = require('../helpers/user.auth');
 const nodemailer = require('nodemailer');
 const axios = require('axios');
 const uuidv4 = require('uuid/v4');
+const app = require('../../../index');
+const UserFactory = require('../factories/user.factory');
+const truncate = require('../helpers/truncate');
+const { User } = require('../../models');
+const getAuthorizedUser = require('../helpers/user.auth');
 
 const sandbox = sinon.createSandbox();
 
@@ -35,10 +36,7 @@ describe('Authentication', () => {
   };
 
   beforeEach(async () => {
-    await User.destroy({
-      where: {},
-      truncate: true,
-    });
+    await truncate();
   });
 
   afterEach(() => sandbox.restore());
@@ -92,7 +90,7 @@ describe('Authentication', () => {
         .post('/v1/auth/logout')
         .send({ refreshToken: userAuth.user.refreshToken.token });
       expect(res.status).to.eq(httpStatus.NO_CONTENT);
-      const user = await User.findById(userAuth.user.id);
+      const user = await User.findByPk(userAuth.user.id);
       expect(user.refreshToken).to.eq(null);
     });
 
@@ -176,7 +174,7 @@ describe('Authentication', () => {
 
     it('should return error when accessToken is not valid', async () => {
       sandbox.stub(axios, 'get').rejects({
-        name: 'AuthStrategiesError',
+        name: 'INVALID_SOCIAL',
         status: httpStatus.UNAUTHORIZED,
       });
       await request(app)
@@ -253,7 +251,7 @@ describe('Authentication', () => {
 
     it('should return error when accessToken is not valid', async () => {
       sandbox.stub(axios, 'get').rejects({
-        name: 'AuthStrategiesError',
+        name: 'INVALID_SOCIAL',
         status: httpStatus.UNAUTHORIZED,
       });
       await request(app)

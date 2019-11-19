@@ -3,8 +3,9 @@ const { expect } = require('chai');
 const nodemailer = require('nodemailer');
 const faker = require('faker');
 const mailer = require('../../services/mailer');
+const { SITE_URL } = require('../../../config/vars');
 
-const sandbox = sinon.sandbox.create();
+const sandbox = sinon.createSandbox();
 
 describe('Test mailer service', () => {
   let data = {};
@@ -14,9 +15,9 @@ describe('Test mailer service', () => {
     data = {
       from: process.env.EMAIL_SENDER,
       to: faker.internet.email,
-      subject: faker.lorem.words,
-      template: faker.lorem.word,
-      context: faker.random.objectElement,
+      subject: faker.lorem.words(),
+      template: faker.lorem.word(),
+      context: { site_url: SITE_URL },
     };
 
     transport = {

@@ -5,12 +5,12 @@ const compress = require('compression');
 const methodOverride = require('method-override');
 const cors = require('cors');
 const helmet = require('helmet');
+const httpStatus = require('http-status');
+const passport = require('passport');
 const routes = require('../api/routes/v1');
 const { logs } = require('./vars');
 const errorHandler = require('../api/middlewares/errorHandler');
-const httpStatus = require('http-status');
 const strategies = require('./passport');
-const passport = require('passport');
 
 /**
  * Express instance
