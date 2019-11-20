@@ -5,7 +5,6 @@ require('dotenv-safe').config({
   allowEmptyValues: true,
   path: path.join(__dirname, '../../.env'),
   sample: path.join(__dirname, '../../.env.example'),
-  example: process.env.CI ? '.env.ci.example' : '.env.example',
 });
 
 module.exports = {
