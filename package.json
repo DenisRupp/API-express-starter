@@ -20,7 +20,7 @@
     "lint:fix": "pretty-quick --staged && yarn lint -- --fix",
     "lint:watch": "yarn lint -- --watch",
     "test": "cross-env NODE_ENV=test mocha --timeout 20000 --recursive src/api/tests --exit",
-    "test:coverage": "cross-env NODE_ENV=test nyc --reporter=html --reporter=text mocha --timeout 20000 --recursive src/api/tests",
+    "test:coverage": "cross-env NODE_ENV=test nyc --reporter=html --reporter=text mocha --timeout 20000 --recursive src/api/tests --exit",
     "test:unit": "cross-env NODE_ENV=test mocha src/api/tests/unit",
     "test:integration": "cross-env NODE_ENV=test mocha --timeout 20000 src/api/tests/integration",
     "test:watch": "cross-env NODE_ENV=test mocha --watch src/api/tests/unit",
